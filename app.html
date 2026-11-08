@@ -55,7 +55,7 @@ button,input,select{font:inherit;color:inherit}
 .board .ds{--o:calc(var(--ol,4px)*.75)}
 .content{position:absolute;inset:0;padding:54px 64px 46px;display:grid;grid-template-rows:100%;column-gap:56px}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
-.board-mat .content{grid-template-columns:1fr 1fr 1.2fr .9fr;column-gap:40px}
+.board-mat .content{grid-template-columns:1.05fr 1fr 1.2fr .85fr;column-gap:40px}
 .board-bar .content{grid-template-columns:1fr 1fr 1fr;column-gap:64px}
 .content.has-span{grid-template-rows:auto minmax(0,1fr)}
 .spanhead{--k:1;grid-row:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);padding-bottom:calc(var(--k)*12px)}
@@ -518,7 +518,7 @@ const SCREENS={
     cols3:[[['pizza',0,4]],[['pizza',1,4]],[['pizza',2,4]],[['pizza',3,4,1]]],tpl3:'1fr 1fr 1fr 1fr',flow:['special','inbakad'],row2:true,row2pad:0},
   mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','kyckling','burgare','dessert','salad'],
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
-    cols:[[['starters'],['favorites'],['dessert']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['grill']]]},
+    cols:[[['starters'],['favorites'],['grill']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['dessert']]]},
   bar:{name:'Barskärm',order:['ol','sprit','whisky','vin','bubbel','cider','drinkar','shots'],
     cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider'],['drinkar'],['shots']]]}
 };
