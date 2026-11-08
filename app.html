@@ -477,9 +477,9 @@ const SCREENS={
     // Three pizza columns give every row more height, so the text can be larger
     // One list in number order over 4 equal columns: pizzas, then Special and Inbakad
     cols3:[[['pizza',0,4]],[['pizza',1,4]],[['pizza',2,4]],[['pizza',3,4,1]]],tpl3:'1fr 1fr 1fr 1fr',flow:['special','inbakad'],row2:true,row2pad:0},
-  mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','burgare','dessert','salad'],
+  mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','kyckling','burgare','dessert','salad'],
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
-    cols:[[['starters'],['favorites'],['dessert']],[['pasta'],['kebab']],[['smash'],['burgare']],[['salad'],['grill']]]}
+    cols:[[['starters'],['favorites'],['dessert']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['grill']]]}
 };
 const BGS=[{id:'eld',name:'Eld',m:0},{id:'glod',name:'Glöd',m:1},{id:'rok',name:'Rök',m:2},{id:'vedugn',name:'Vedugn',m:3},{id:'neon',name:'Neon',m:4},{id:'lava',name:'Lava',m:5},{id:'norrsken',name:'Norrsken',m:6},{id:'stjarnor',name:'Stjärnor',m:7},{id:'solnedgang',name:'Solnedgång',m:8},{id:'eldbild',name:'Eldbild',m:1,img:'/backgrounds/eld1.jpg'},{id:'v52314',name:'Flammor',m:-1,vid:'https://assets.mixkit.co/videos/52314/52314-1080.mp4',hd:1,dim:15},{id:'v52312',name:'Lågor',m:-1,vid:'https://assets.mixkit.co/videos/52312/52312-1080.mp4',hd:1,dim:30},{id:'v52304',name:'Eldhav',m:-1,vid:'https://assets.mixkit.co/videos/52304/52304-1080.mp4',hd:1,dim:40},{id:'v52308',name:'Eldsida',m:-1,vid:'https://assets.mixkit.co/videos/52308/52308-1080.mp4',hd:1,dim:10},{id:'v2709',name:'Vedbrasa',m:-1,vid:'https://assets.mixkit.co/videos/2709/2709-1080.mp4',hd:1,dim:35},{id:'v4426',name:'Gnistor',m:-1,vid:'https://assets.mixkit.co/videos/4426/4426-1080.mp4',hd:1,dim:0},{id:'eldvideo',name:'Eldvideo',m:-1,vid:'/videos/eld-video.mp4'},{id:'video',name:'Egen video',m:-1},{id:'ingen',name:'Ingen',m:-1}];
 const SCREEN_DEF={bg:'eld',power:60,outline:4,dim:0,video:'',dsize:110,theme:'klassisk',split:3};
@@ -493,6 +493,8 @@ function normalize(s){
   if(!s||!s.sections) return defaults();
   if(!s.screens) s.screens={};
   for(const k of ['pizza','mat']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  // Sections added after launch: create them empty so older saved menus still work
+  if(!s.sections.kyckling) s.sections.kyckling={title:'Kycklingburgare',note:'',footer:'',numbered:false,labels:['Endast\nburgare','Med\npommes'],items:[]};
   let max=0; Object.values(s.sections).forEach(sec=>sec.items.forEach(it=>{const n=+String(it.id).slice(1); if(n>max)max=n;}));
   uid=Math.max(uid,max+1); return s;
 }
@@ -555,6 +557,8 @@ function klassRows(items){
 }
 function secHTML(sec,part,noHead,n,sid){
   if(!sec) return '';
+  // A food section with nothing to show is left out completely (no empty heading)
+  if(part==null&&sid!=='pizza'&&!sec.items.some(i=>i.state!=='hidden')) return '';
   let items=sec.items.filter(i=>i.state!=='hidden');
   if(sec===state.sections.pizza){
     // Pizzas in number order (no price classes); Special and Inbakad follow in the same list
