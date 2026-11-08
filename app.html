@@ -56,6 +56,7 @@ button,input,select{font:inherit;color:inherit}
 .content{position:absolute;inset:0;padding:54px 64px 46px;display:grid;grid-template-rows:100%;column-gap:56px}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
 .board-mat .content{grid-template-columns:1fr 1fr 1.2fr .9fr;column-gap:40px}
+.board-bar .content{grid-template-columns:1fr 1fr 1fr;column-gap:64px}
 .content.has-span{grid-template-rows:auto minmax(0,1fr)}
 .spanhead{--k:1;grid-row:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);padding-bottom:calc(var(--k)*12px)}
 .board .content .spanhead .plank{align-self:center}
@@ -84,15 +85,15 @@ button,input,select{font:inherit;color:inherit}
 .ds{font-family:var(--f-desc);font-size:calc(var(--k)*21px*var(--dsz,1.3));font-weight:600;line-height:1.12;color:var(--board-desc);text-shadow:0 2px 6px var(--shadow)}
 .pr{font-family:var(--f-item);font-weight:600;font-size:calc(var(--k)*30px);white-space:nowrap;text-align:end;font-variant-numeric:tabular-nums;text-shadow:0 2px 8px var(--shadow)}
 .item.is-slut .nm,.item.is-slut .ds{opacity:.45}
-.board-pizza .col,.board-mat .col{position:relative}
+.board-pizza .col,.board-mat .col,.board-bar .col{position:relative}
 .board-pizza .ds{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Ingredients may use the full width, also under the price; number and price sit on the name line */
 .board-pizza .item>div{grid-column:2 / 4;grid-row:1;min-width:0}
 .board-pizza .item>.pr,.board-pizza .item>.slut{grid-column:3;grid-row:1;align-self:start;line-height:calc(var(--k)*33.5px)}
 .board-pizza .item>.no{grid-row:1;align-self:start;line-height:calc(var(--k)*33.5px)}
-.board-pizza .item,.board-pizza .klass,.board-mat .item{margin-bottom:var(--fill,0px)}
+.board-pizza .item,.board-pizza .klass,.board-mat .item,.board-bar .item{margin-bottom:var(--fill,0px)}
 /* Food screen: slightly smaller section signs leave more room for the dishes */
-.board-mat .content .plank{zoom:.88}
+.board-mat .content .plank,.board-bar .content .plank{zoom:.88}
 /* Kycklingburgare heading sits to the left, away from the price labels */
 .board-mat .sec-kyckling>.plank{align-self:flex-start;margin-left:calc(var(--k)*20px)}
 .phead{display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);margin-top:calc(var(--k)*10px)}
@@ -361,6 +362,26 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
       </div>
       </details>
     </div>
+    <div class="scard" data-screen="bar">
+      <div class="scard-head"><strong>Barskärm</strong><a class="btn small" href="/bar">Öppna skärmen</a></div>
+      <div class="pv" id="pv-bar"></div>
+      <div class="linkrow"><code id="link-bar"></code><a class="btn small" href="/bar" target="_blank" rel="noopener">Öppna i nytt fönster ↗</a></div>
+      <details class="sset" id="sset-bar">
+      <summary><span>Inställningar</span><small>Stil, bakgrund och text</small></summary>
+      <div class="sset-body">
+      <div class="sts" role="group" aria-label="Menystil barskärm"></div>
+      <div class="bgs" role="group" aria-label="Bakgrund barskärm"></div>
+      <div class="vidrow" id="vidrow-bar" hidden>
+        <label class="fld"><span>Videolänk (.mp4)</span><input class="inp" id="vid-bar" data-vid="bar" placeholder="/videos/eld.mp4 eller https://…/video.mp4"></label>
+        <p class="hint">Lägg mp4-filen i mappen <b>public/videos</b> och publicera, skriv sedan t.ex. <b>/videos/eld.mp4</b>. Eller klistra in en direktlänk till en mp4-fil. Videon spelas utan ljud och upprepas.</p>
+      </div>
+      <label class="ctrl" id="powrow-bar"><span>Styrka</span><input type="range" min="0" max="100" step="5" id="pow-bar" data-pow="bar"><span id="powv-bar" style="width:3ch;text-align:end">60</span></label>
+      <label class="ctrl"><span>Ingredienser storlek</span><input type="range" min="80" max="180" step="10" id="ds-bar" data-ds="bar"><span id="dsv-bar" style="width:4ch;text-align:end">130%</span></label>
+      <label class="ctrl"><span>Textkontur</span><input type="range" min="0" max="8" step="1" id="ol-bar" data-ol="bar"><span id="olv-bar" style="width:3ch;text-align:end">4</span></label>
+      <label class="ctrl"><span>Mörkare bakgrund</span><input type="range" min="0" max="80" step="5" id="dim-bar" data-dim="bar"><span id="dimv-bar" style="width:3ch;text-align:end">0</span></label>
+      </div>
+      </details>
+    </div>
   </div>
 
   <h2>Meny</h2>
@@ -371,6 +392,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
       <option value="all">Hela menyn</option>
       <option value="pizza">Bara pizzaskärmen</option>
       <option value="mat">Bara matskärmen</option>
+      <option value="bar">Bara barskärmen</option>
     </select>
     <button class="btn" id="bulk-up" type="button">＋ Höj</button>
     <button class="btn" id="bulk-down" type="button">－ Sänk</button>
@@ -381,6 +403,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="pizza" aria-selected="true" type="button">Pizzasektioner</button>
     <button class="tab" role="tab" data-tab="mat" aria-selected="false" type="button">Matsektioner</button>
+    <button class="tab" role="tab" data-tab="bar" aria-selected="false" type="button">Barsektioner</button>
   </div>
   <div id="sections"></div>
 </div>
@@ -407,9 +430,21 @@ function S(title,note,rows,opt={}){
   return {title,note:note||'',footer:opt.footer||'',labels:opt.labels||null,numbered:!!opt.numbered,
     items:rows.map(r=>({id:nid(),no:r[0]??'',name:r[1],desc:r[2]||'',price:String(r[3]??''),price2:String(r[4]??''),state:'on'}))};
 }
+/* Bar screen sections, made from the till's price list */
+function barSections(){return {
+  ol:S('Starköl','',[['','Bryggmästarens','',70],['','Efes','',72],['','Staropramen','',79],['','Peroni','',67],['','Heineken','',68],['','Corona','',68],
+    ['','Newcastle','',68],['','Åbro Original','',70],['','Småland 5,2%','',72],['','Småland 7,2%','',81],['','London Pride','',89],['','India Pale Ale','',89],
+    ['','Duvel','',89],['','Weissbier veteöl','',89],['','Spaten','',79],['','Stor stark','',50],['','Mellanöl 33cl','',55]]),
+  vin:S('Vin','',[['','Vitt vin','',80,270],['','Rött vin','',80,270],['','Rosévin','',85,269]],{labels:['Glas','Flaska']}),
+  bubbel:S('Bubbel','',[['','Cava piccolo','',85],['','Cava / Prosecco flaska','',350],['','Champagne flaska','',620]]),
+  cider:S('Cider','',[['','Jordgubb/Lime','',70],['','Päron','',70],['','Skogsbär','',78],['','Smirnoff Ice','',82],['','Bacardi Breezer','',85]]),
+  drinkar:S('Drinkar','',[['','Drink','',125,140],['','Vodka Red Bull','',130,150]],{labels:['4 cl','6 cl']}),
+  shots:S('','',[['','Veckans drink','',105],['','Kaffedrinkar','',125],['','Hotshot','',100],['','Shotbricka','',105]]),
+  sprit:S('Sprit','',[['','Vodka','','22/cl'],['','Gin','','22/cl'],['','Tequila','','25/cl'],['','Whiskey','','30/cl'],['','Jägermeister','','22/cl'],['','Sambuca','','22/cl'],['','Fireball','','22/cl']])
+};}
 function defaults(){
   uid=1;
-  return {v:2,screens:{pizza:{...SCREEN_DEF},mat:{...SCREEN_DEF}},sections:{
+  return {v:2,screens:{pizza:{...SCREEN_DEF},mat:{...SCREEN_DEF},bar:{...SCREEN_DEF,bg:'rok'}},sections:{...barSections(),
   pizza:S('Pizza','tomatsås & ost ingår till samtliga pizzor',[
     [1,'Margherita','tomatsås & ost',125],[2,'Funghi','champinjoner',125],[3,'Vesuvio','skinka',125],[4,'Pescatore','tonfisk',125],
     [5,'Capricciosa','skinka, champinjoner',125],[6,'Hawaii','skinka, ananas',125],[7,'La Bussola','skinka, räkor',125],
@@ -481,7 +516,9 @@ const SCREENS={
     cols3:[[['pizza',0,4]],[['pizza',1,4]],[['pizza',2,4]],[['pizza',3,4,1]]],tpl3:'1fr 1fr 1fr 1fr',flow:['special','inbakad'],row2:true,row2pad:0},
   mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','kyckling','burgare','dessert','salad'],
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
-    cols:[[['starters'],['favorites'],['dessert']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['grill']]]}
+    cols:[[['starters'],['favorites'],['dessert']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['grill']]]},
+  bar:{name:'Barskärm',order:['ol','vin','bubbel','cider','drinkar','shots','sprit'],
+    cols:[[['ol']],[['vin'],['bubbel'],['cider']],[['drinkar'],['shots'],['sprit']]]}
 };
 const BGS=[{id:'eld',name:'Eld',m:0},{id:'glod',name:'Glöd',m:1},{id:'rok',name:'Rök',m:2},{id:'vedugn',name:'Vedugn',m:3},{id:'neon',name:'Neon',m:4},{id:'lava',name:'Lava',m:5},{id:'norrsken',name:'Norrsken',m:6},{id:'stjarnor',name:'Stjärnor',m:7},{id:'solnedgang',name:'Solnedgång',m:8},{id:'eldbild',name:'Eldbild',m:1,img:'/backgrounds/eld1.jpg'},{id:'v52314',name:'Flammor',m:-1,vid:'https://assets.mixkit.co/videos/52314/52314-1080.mp4',hd:1,dim:15},{id:'v52312',name:'Lågor',m:-1,vid:'https://assets.mixkit.co/videos/52312/52312-1080.mp4',hd:1,dim:30},{id:'v52304',name:'Eldhav',m:-1,vid:'https://assets.mixkit.co/videos/52304/52304-1080.mp4',hd:1,dim:40},{id:'v52308',name:'Eldsida',m:-1,vid:'https://assets.mixkit.co/videos/52308/52308-1080.mp4',hd:1,dim:10},{id:'v2709',name:'Vedbrasa',m:-1,vid:'https://assets.mixkit.co/videos/2709/2709-1080.mp4',hd:1,dim:35},{id:'v4426',name:'Gnistor',m:-1,vid:'https://assets.mixkit.co/videos/4426/4426-1080.mp4',hd:1,dim:0},{id:'eldvideo',name:'Eldvideo',m:-1,vid:'/videos/eld-video.mp4'},{id:'video',name:'Egen video',m:-1},{id:'ingen',name:'Ingen',m:-1}];
 const SCREEN_DEF={bg:'eld',power:60,outline:4,dim:0,video:'',dsize:110,theme:'klassisk',split:3};
@@ -494,11 +531,15 @@ let state;
 function normalize(s){
   if(!s||!s.sections) return defaults();
   if(!s.screens) s.screens={};
-  for(const k of ['pizza','mat']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  if(!s.screens.bar) s.screens.bar={bg:'rok'};
+  for(const k of ['pizza','mat','bar']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
   // Sections added after launch: create them empty so older saved menus still work
   if(!s.sections.kyckling) s.sections.kyckling={title:'Kycklingburgare',note:'',footer:'',numbered:false,labels:['Endast\nburgare','Med\npommes'],items:[]};
   let max=0; Object.values(s.sections).forEach(sec=>sec.items.forEach(it=>{const n=+String(it.id).slice(1); if(n>max)max=n;}));
-  uid=Math.max(uid,max+1); return s;
+  uid=Math.max(uid,max+1);
+  // Bar screen added later: older saved menus get its sections
+  if(!s.sections.ol){const b=barSections();for(const k in b) if(!s.sections[k]) s.sections[k]=b[k];}
+  return s;
 }
 function readCache(){try{const r=localStorage.getItem(CACHE);return r?JSON.parse(r):null;}catch(e){return null;}}
 function writeCache(){try{localStorage.setItem(CACHE,JSON.stringify(state));}catch(e){}}
@@ -678,7 +719,7 @@ function renderBoard(b){
 function fit(b){
   const cols=[...b.content.querySelectorAll('.col')];
   const all=[...cols,...b.content.querySelectorAll('.spanhead')];
-  const oneLine=b.key==='pizza',grow=oneLine||b.key==='mat';
+  const oneLine=b.key==='pizza',grow=oneLine||b.key==='mat'||b.key==='bar';
   const lines=[...b.content.querySelectorAll('.ds')];
   lines.forEach(d=>d.style.fontSize='');
   cols.forEach(c=>c.style.setProperty('--fill','0px'));
@@ -690,7 +731,7 @@ function fit(b){
   cols.forEach(c=>c.style.setProperty('--kh',k.toFixed(4)));
   // Pizza screen: a column with fewer rows gets slightly larger text (max +30%) so it fills its height
   // Food screen: section signs keep one size in every column so they line up at the top
-  if(b.key==='mat') b.content.querySelectorAll('.plank').forEach(p=>p.style.setProperty('--k',k.toFixed(4)));
+  if(b.key==='mat'||b.key==='bar') b.content.querySelectorAll('.plank').forEach(p=>p.style.setProperty('--k',k.toFixed(4)));
   if(grow) cols.forEach(c=>{const ls=oneLine?[...c.querySelectorAll('.ds')]:[];const bad=()=>c.scrollHeight>c.clientHeight+1||ls.some(d=>d.scrollWidth>d.clientWidth*1.2);
     let kc=k;const top=Math.min(1.05,k*1.3);
     while(kc+0.0125<=top+1e-9){c.style.setProperty('--k',(kc+0.0125).toFixed(4));if(bad()){c.style.setProperty('--k',kc.toFixed(4));break;}kc+=0.0125;}});
@@ -964,7 +1005,7 @@ function buildScreenControls(){
   syncScreenControls();
 }
 function syncScreenControls(){
-  for(const key of ['pizza','mat']){
+  for(const key of ['pizza','mat','bar']){
     const cfg=state.screens[key];
     document.querySelectorAll(`.scard[data-screen="${key}"] .bg`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===cfg.bg)));
     document.querySelectorAll(`.scard[data-screen="${key}"] .st`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===(cfg.theme||'klassisk'))));
@@ -1002,7 +1043,7 @@ function rowHTML(sid,sec,it,i){
 function cardHTML(sid){
   const sec=state.sections[sid]; const two=!!sec.labels;
   return `<details class="card" data-sid="${sid}"${openSet.has(sid)?' open':''}>
-    <summary><span class="ttl">${esc(sec.title||'Hamburgare')}</span><span class="cnt">${sec.items.length} rätter</span></summary>
+    <summary><span class="ttl">${esc(sec.title||({burgare:'Hamburgare',shots:'Shots & mer'}[sid])||'(utan rubrik)')}</span><span class="cnt">${sec.items.length} rätter</span></summary>
     <div class="card-body">
       <div class="sec-fields">
         <label class="fld"><span>Sektionsrubrik</span><input class="inp" id="${sid}-title" data-sf="title" value="${esc(sec.title)}"></label>
@@ -1076,7 +1117,7 @@ function onClick(e){
 function bulk(sign){
   const amt=Math.abs(parseInt($('#bulk-amt').value,10)||0); if(!amt) return;
   const scope=$('#bulk-scope').value;
-  const ids=scope==='all'?[...SCREENS.pizza.order,...SCREENS.mat.order]:SCREENS[scope].order;
+  const ids=scope==='all'?[...SCREENS.pizza.order,...SCREENS.mat.order,...SCREENS.bar.order]:SCREENS[scope].order;
   const shift=(v,d)=>String(v).replace(/\d+/g,m=>String(Math.max(0,+m+d)));
   let n=0;
   ids.forEach(sid=>state.sections[sid].items.forEach(it=>{if(/\d/.test(it.price))n++;if(/\d/.test(it.price2))n++;it.price=shift(it.price,sign*amt);it.price2=shift(it.price2,sign*amt);}));
@@ -1136,18 +1177,18 @@ function route(){
   boards.length=0; fxs.forEach(f=>f.dispose()); fxs.clear();
   if(h==='info'){showInfo();return;}
   // TV app start: open the screen this TV showed last (changed with the Back button), else the one picked in the app
-  if(h==='tv'){const q=new URLSearchParams(location.search);let d=q.get('d')==='mat'?'mat':'pizza';
-    if(q.has('pick')){try{localStorage.setItem('tvscreen',d);}catch(e){}}else{try{const v=localStorage.getItem('tvscreen');if(v==='pizza'||v==='mat')d=v;}catch(e){}}
+  if(h==='tv'){const q=new URLSearchParams(location.search);let d=SCREENS[q.get('d')]?q.get('d'):'pizza';
+    if(q.has('pick')){try{localStorage.setItem('tvscreen',d);}catch(e){}}else{try{const v=localStorage.getItem('tvscreen');if(SCREENS[v])d=v;}catch(e){}}
     location.replace('/'+d);return;}
-  if(h==='pizza'||h==='mat'){
-    $('#admin').hidden=true;$('#screen').hidden=false;$('#pv-pizza').innerHTML='';$('#pv-mat').innerHTML='';
+  if(h==='pizza'||h==='mat'||h==='bar'){
+    $('#admin').hidden=true;$('#screen').hidden=false;$('#pv-pizza').innerHTML='';$('#pv-mat').innerHTML='';$('#pv-bar').innerHTML='';
     mount($('#screen-host'),h,true);wake();
     try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>{wakeLock=l;}).catch(()=>{});}catch(e){}
     keepAwake();
     const n=new Date(),r=new Date(n);r.setHours(4,0,0,0);if(r<=n)r.setDate(r.getDate()+1);setTimeout(()=>location.reload(),r-n);
   }else{
     $('#screen').hidden=true;$('#admin').hidden=false;$('#screen-host').innerHTML='';
-    mount($('#pv-pizza'),'pizza');mount($('#pv-mat'),'mat');buildScreenControls();buildEditor();
+    mount($('#pv-pizza'),'pizza');mount($('#pv-mat'),'mat');mount($('#pv-bar'),'bar');buildScreenControls();buildEditor();
   }
 }
 function wake(){
@@ -1172,7 +1213,7 @@ document.querySelectorAll('.scard').forEach(card=>{
   card.querySelector('[data-dim]').addEventListener('input',e=>{state.screens[key].dim=+e.target.value;$('#dimv-'+key).textContent=e.target.value+'%';redrawFx();queueSave();});
   let vt; card.querySelector('[data-vid]').addEventListener('input',e=>{state.screens[key].video=e.target.value.trim();clearTimeout(vt);vt=setTimeout(redrawFx,600);queueSave();});
 });
-['pizza','mat'].forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
+['pizza','mat','bar'].forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
   try{if(localStorage.getItem('sset-'+k)==='1')d.open=true;}catch(e){}
   d.addEventListener('toggle',()=>{try{localStorage.setItem('sset-'+k,d.open?'1':'0');}catch(e){}});});
 document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
@@ -1216,21 +1257,21 @@ async function checkVersion(){
 }
 checkVersion();setInterval(checkVersion,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVersion();});
-/* TV app: the Back button shows a screen choice (Pizzaskärm / Matskärm); with no choice the menu stays after 8 s */
+/* TV app: the Back button shows a screen choice (Pizza / Mat / Bar); with no choice the menu stays after 8 s */
 window.tvBack=function(){
   if($('#screen').hidden)return;
   let ov=document.getElementById('tvchoose');
   if(ov){ov.remove();}
   ov=document.createElement('div');ov.id='tvchoose';
   ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(10,10,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;font-family:Arial,sans-serif;color:#fff';
-  const cur=location.pathname.indexOf('mat')>=0?'mat':'pizza';let sel=cur,left=8;
-  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:flex;gap:48px"><button data-s="pizza">Pizzaskärm</button><button data-s="mat">Matskärm</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
+  const LIST=['pizza','mat','bar'],p0=location.pathname.replace(/\//g,''),cur=LIST.includes(p0)?p0:'pizza';let sel=cur,left=8;
+  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:flex;gap:40px"><button data-s="pizza">Pizzaskärm</button><button data-s="mat">Matskärm</button><button data-s="bar">Barskärm</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
   const btns=[...ov.querySelectorAll('button')];
-  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 52px Arial;color:#fff;border-radius:24px;padding:40px 80px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
+  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 50px Arial;color:#fff;border-radius:24px;padding:40px 60px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
     ov.querySelector('#tvmsg').textContent='◀ ▶ byt  ·  OK välj  ·  stängs om '+left+' s';};
   const close=()=>{clearInterval(t);document.removeEventListener('keydown',key,true);ov.remove();};
   const go=s2=>{close();try{localStorage.setItem('tvscreen',s2);}catch(e){}if(s2!==cur)location.href='/'+s2;};
-  const key=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){sel=sel==='pizza'?'mat':'pizza';left=8;draw();}
+  const key=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){sel=LIST[(LIST.indexOf(sel)+(e.key==='ArrowRight'?1:2))%3];left=8;draw();}
     else if(e.key==='Enter'||e.keyCode===13||e.keyCode===23){go(sel);}
     else if(e.key==='Escape'||e.key==='GoBack'||e.key==='BrowserBack'){close();}
     e.preventDefault();e.stopPropagation();};
