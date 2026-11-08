@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Picasso Meny</title><style>html,body{margin:0;background:#111}</style></head>
+<body>
+<script>
+/* Picasso Meny loader: the real menu code lives on GitHub (app.html).
+   Newest code from GitHub -> else the last code this screen saved -> else the copy on this site. */
+(async function(){
+  var SRC='https://raw.githubusercontent.com/1picassopizza-tech/picasso-meny/main/app.html';
+  var ok=function(t){return t&&t.length>20000&&t.indexOf('</html>')>=0;};
+  var html=null;
+  try{var r=await fetch(SRC+'?t='+Date.now(),{cache:'no-store'});if(r.ok){var t=await r.text();if(ok(t)){html=t;try{localStorage.setItem('pm_code',t);}catch(e){}}}}catch(e){}
+  if(!html){try{var c=localStorage.getItem('pm_code');if(ok(c))html=c;}catch(e){}}
+  if(!html){try{var r2=await fetch('/app.html',{cache:'no-store'});html=await r2.text();}catch(e){}}
+  if(!html){document.body.innerHTML='<p style="color:#fff;font:24px Arial;padding:40px">Ingen kontakt – försöker igen…</p>';setTimeout(function(){location.reload();},15000);return;}
+  var hash='';try{hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(html)))).map(function(b){return b.toString(16).padStart(2,'0');}).join('');}catch(e){}
+  window.__PM_SRC=SRC;window.__PM_HASH=hash;
+  try{sessionStorage.setItem('pm_src',SRC);sessionStorage.setItem('pm_hash',hash);}catch(e){}
+  document.open();document.write(html);document.close();
+})();
+</script>
+</body></html>
