@@ -53,7 +53,7 @@ button,input,select{font:inherit;color:inherit}
 .board .ds{--o:calc(var(--ol,4px)*.75)}
 .content{position:absolute;inset:0;padding:54px 64px 46px;display:grid;grid-template-rows:100%;column-gap:56px}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
-.board-mat .content{grid-template-columns:1fr 1.06fr 1.14fr 1fr;column-gap:46px}
+.board-mat .content{grid-template-columns:1fr 1fr 1fr 1fr;column-gap:40px}
 .content.has-span{grid-template-rows:auto minmax(0,1fr)}
 .spanhead{--k:1;grid-row:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);padding-bottom:calc(var(--k)*12px)}
 .board .content .spanhead .plank{align-self:center}
@@ -82,13 +82,15 @@ button,input,select{font:inherit;color:inherit}
 .ds{font-family:var(--f-desc);font-size:calc(var(--k)*21px*var(--dsz,1.3));font-weight:600;line-height:1.12;color:var(--board-desc);text-shadow:0 2px 6px var(--shadow)}
 .pr{font-family:var(--f-item);font-weight:600;font-size:calc(var(--k)*30px);white-space:nowrap;text-align:end;font-variant-numeric:tabular-nums;text-shadow:0 2px 8px var(--shadow)}
 .item.is-slut .nm,.item.is-slut .ds{opacity:.45}
-.board-pizza .col{position:relative}
+.board-pizza .col,.board-mat .col{position:relative}
 .board-pizza .ds{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Ingredients may use the full width, also under the price; number and price sit on the name line */
 .board-pizza .item>div{grid-column:2 / 4;grid-row:1;min-width:0}
 .board-pizza .item>.pr,.board-pizza .item>.slut{grid-column:3;grid-row:1;align-self:start;line-height:calc(var(--k)*33.5px)}
 .board-pizza .item>.no{grid-row:1;align-self:start;line-height:calc(var(--k)*33.5px)}
-.board-pizza .item,.board-pizza .klass{margin-bottom:var(--fill,0px)}
+.board-pizza .item,.board-pizza .klass,.board-mat .item{margin-bottom:var(--fill,0px)}
+/* Food screen: slightly smaller section signs leave more room for the dishes */
+.board-mat .content .plank{zoom:.88}
 .phead{display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);margin-top:calc(var(--k)*10px)}
 .phead:first-child{margin-top:0}
 .phead .note{text-align:center}
@@ -473,7 +475,9 @@ const SCREENS={
     // Three pizza columns give every row more height, so the text can be larger
     // Every class keeps its own column (Klass 1, 2, 3); Special and Inbakad share column 4
     cols3:[[['pizza',0,3]],[['pizza',1,3]],[['pizza',2,3]],[['special'],['inbakad']]],tpl3:'0.94fr 1.04fr 1.1fr 0.92fr',row2:true,row2pad:34},
-  mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','burgare','dessert','salad'],cols:[[['starters'],['favorites'],['grill']],[['pasta'],['kebab']],[['smash'],['burgare'],['dessert']],[['salad']]]}
+  mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','burgare','dessert','salad'],
+    // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
+    cols:[[['starters'],['pasta']],[['favorites'],['grill'],['kebab']],[['smash'],['burgare']],[['salad'],['dessert']]]}
 };
 const BGS=[{id:'eld',name:'Eld',m:0},{id:'glod',name:'Glöd',m:1},{id:'rok',name:'Rök',m:2},{id:'vedugn',name:'Vedugn',m:3},{id:'neon',name:'Neon',m:4},{id:'lava',name:'Lava',m:5},{id:'norrsken',name:'Norrsken',m:6},{id:'stjarnor',name:'Stjärnor',m:7},{id:'solnedgang',name:'Solnedgång',m:8},{id:'eldbild',name:'Eldbild',m:1,img:'/backgrounds/eld1.jpg'},{id:'v52314',name:'Flammor',m:-1,vid:'https://assets.mixkit.co/videos/52314/52314-1080.mp4',hd:1,dim:15},{id:'v52312',name:'Lågor',m:-1,vid:'https://assets.mixkit.co/videos/52312/52312-1080.mp4',hd:1,dim:30},{id:'v52304',name:'Eldhav',m:-1,vid:'https://assets.mixkit.co/videos/52304/52304-1080.mp4',hd:1,dim:40},{id:'v52308',name:'Eldsida',m:-1,vid:'https://assets.mixkit.co/videos/52308/52308-1080.mp4',hd:1,dim:10},{id:'v2709',name:'Vedbrasa',m:-1,vid:'https://assets.mixkit.co/videos/2709/2709-1080.mp4',hd:1,dim:35},{id:'v4426',name:'Gnistor',m:-1,vid:'https://assets.mixkit.co/videos/4426/4426-1080.mp4',hd:1,dim:0},{id:'eldvideo',name:'Eldvideo',m:-1,vid:'/videos/eld-video.mp4'},{id:'video',name:'Egen video',m:-1},{id:'ingen',name:'Ingen',m:-1}];
 const SCREEN_DEF={bg:'eld',power:60,outline:4,dim:0,video:'',dsize:110,theme:'klassisk',split:3};
@@ -657,7 +661,7 @@ function renderBoard(b){
 function fit(b){
   const cols=[...b.content.querySelectorAll('.col')];
   const all=[...cols,...b.content.querySelectorAll('.spanhead')];
-  const oneLine=b.key==='pizza';
+  const oneLine=b.key==='pizza',grow=oneLine||b.key==='mat';
   const lines=[...b.content.querySelectorAll('.ds')];
   lines.forEach(d=>d.style.fontSize='');
   cols.forEach(c=>c.style.setProperty('--fill','0px'));
@@ -668,13 +672,15 @@ function fit(b){
   // Class headings keep one size in every column, so they line up
   cols.forEach(c=>c.style.setProperty('--kh',k.toFixed(4)));
   // Pizza screen: a column with fewer rows gets slightly larger text (max +30%) so it fills its height
-  if(oneLine) cols.forEach(c=>{const ls=[...c.querySelectorAll('.ds')];const bad=()=>c.scrollHeight>c.clientHeight+1||ls.some(d=>d.scrollWidth>d.clientWidth*1.2);
+  // Food screen: section signs keep one size in every column so they line up at the top
+  if(b.key==='mat') b.content.querySelectorAll('.plank').forEach(p=>p.style.setProperty('--k',k.toFixed(4)));
+  if(grow) cols.forEach(c=>{const ls=oneLine?[...c.querySelectorAll('.ds')]:[];const bad=()=>c.scrollHeight>c.clientHeight+1||ls.some(d=>d.scrollWidth>d.clientWidth*1.2);
     let kc=k;const top=Math.min(1.05,k*1.3);
     while(kc+0.0125<=top+1e-9){c.style.setProperty('--k',(kc+0.0125).toFixed(4));if(bad()){c.style.setProperty('--k',kc.toFixed(4));break;}kc+=0.0125;}});
   // A long ingredient line shrinks a little on its own instead of shrinking the whole menu
   if(oneLine) lines.forEach(d=>{if(d.scrollWidth>d.clientWidth)d.style.fontSize=(parseFloat(getComputedStyle(d).fontSize)*d.clientWidth/d.scrollWidth*0.98).toFixed(2)+'px';});
   // No empty block at the bottom of a column: share the free height between its rows
-  if(oneLine) cols.forEach(c=>{const rows=c.querySelectorAll('.item,.klass').length;const last=c.lastElementChild;if(!last)return;
+  if(grow) cols.forEach(c=>{const rows=c.querySelectorAll('.item,.klass').length;const last=c.lastElementChild;if(!last)return;
     const free=c.clientHeight-(last.offsetTop+last.offsetHeight);
     if(rows>1&&free>4)c.style.setProperty('--fill',Math.min((free-4)/rows,14).toFixed(1)+'px');});
 }
