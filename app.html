@@ -473,8 +473,8 @@ function defaults(){
 const SCREENS={
   pizza:{name:'Pizzaskärm',order:['pizza','special','inbakad'],cols:[[['pizza',0]],[['pizza',1]],[['special'],['inbakad']]],
     // Three pizza columns give every row more height, so the text can be larger
-    // Every class keeps its own column (Klass 1, 2, 3); Special and Inbakad share column 4
-    cols3:[[['pizza',0,3]],[['pizza',1,3]],[['pizza',2,3]],[['special'],['inbakad']]],tpl3:'0.94fr 1.04fr 1.1fr 0.92fr',row2:true,row2pad:34},
+    // One list in number order over 4 equal columns: pizzas, then Special and Inbakad
+    cols3:[[['pizza',0,4]],[['pizza',1,4]],[['pizza',2,4]],[['pizza',3,4,1]]],tpl3:'1fr 1fr 1fr 1fr',flow:['special','inbakad'],row2:true,row2pad:0},
   mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','burgare','dessert','salad'],
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
     cols:[[['starters'],['pasta']],[['favorites'],['grill'],['kebab']],[['smash'],['burgare']],[['salad'],['dessert']]]}
@@ -555,7 +555,8 @@ function secHTML(sec,part,noHead,n,sid){
   if(!sec) return '';
   let items=sec.items.filter(i=>i.state!=='hidden');
   if(sec===state.sections.pizza){
-    items=klassRows(items);
+    // Pizzas in number order (no price classes); Special and Inbakad follow in the same list
+    items=[...items].sort((a,b)=>(parseInt(a.no)||999)-(parseInt(b.no)||999));
     // Pizza screen: Special and Inbakad continue the same list, each with its own heading
     (pizzaFlow||[]).forEach(fid=>{const fs=state.sections[fid];if(!fs)return;const its=fs.items.filter(i=>i.state!=='hidden');if(!its.length)return;
       items=items.concat([{plank:fs.title,note:fs.note}],its);});
@@ -647,6 +648,14 @@ function renderBoard(b){
     const lastHead=[];let lh=-1;for(let i=0;i<L;i++){if(hd[i])lh=i;lastHead.push(lh);}
     const colH=(a,e)=>pre[e]-pre[a]+(a>0&&!hd[a]&&lastHead[a]>=0?H[lastHead[a]]:0);
     const n=colEls.length;let best=null,bm=1e9;
+    // Same number of dishes in every column (headings do not count); a heading never ends a column
+    if(scr.flow){
+      const N=hd.filter(x=>!x).length,per=Array.from({length:n},(_,c)=>Math.floor(N/n)+(c<N%n?1:0));
+      const bd=[0];let cnt=0,c=0;
+      for(let i=0;i<L&&c<n-1;i++){if(!hd[i]){cnt++;if(cnt===per[c]){bd.push(i+1);c++;cnt=0;}}}
+      while(bd.length<n)bd.push(L);bd.push(L);
+      pizzaBounds=bd;build();fit(b);return;
+    }
     const rec=(start,c,acc,mx,pen)=>{
       if(c===n-1){const m=Math.max(mx,colH(start,L)/caps[c])+pen;if(m<bm){bm=m;best=[...acc,start,L];}return;}
       for(let e=start+1;e<=L-(n-1-c);e++){if(hd[e-1])continue;const r=Math.max(mx,colH(start,e)/caps[c]);if(r+pen>=bm)continue;
@@ -987,7 +996,6 @@ function cardHTML(sid){
   return `<details class="card" data-sid="${sid}"${openSet.has(sid)?' open':''}>
     <summary><span class="ttl">${esc(sec.title||'Hamburgare')}</span><span class="cnt">${sec.items.length} rätter</span></summary>
     <div class="card-body">
-      ${sid==='pizza'?`<p class="hint" style="margin:0 0 10px;opacity:.85">Pizzorna sorteras automatiskt efter pris på skärmen: <b>Klass 1</b> upp till 135:-, <b>Klass 2</b> 136–149:-, <b>Klass 3</b> från 150:-. Ändra priset så hamnar pizzan i rätt klass.</p>`:''}
       <div class="sec-fields">
         <label class="fld"><span>Sektionsrubrik</span><input class="inp" id="${sid}-title" data-sf="title" value="${esc(sec.title)}"></label>
         <label class="fld"><span>Text under rubriken (/ = ny rad)</span><input class="inp" id="${sid}-note" data-sf="note" value="${esc(sec.note.replace(/\n/g,' / '))}"></label>
