@@ -93,6 +93,8 @@ button,input,select{font:inherit;color:inherit}
 .board-pizza .item,.board-pizza .klass,.board-mat .item{margin-bottom:var(--fill,0px)}
 /* Food screen: slightly smaller section signs leave more room for the dishes */
 .board-mat .content .plank{zoom:.88}
+/* Kycklingburgare heading sits to the left, away from the price labels */
+.board-mat .sec-kyckling>.plank{align-self:flex-start;margin-left:calc(var(--k)*20px)}
 .phead{display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);margin-top:calc(var(--k)*10px)}
 .phead:first-child{margin-top:0}
 .phead .note{text-align:center}
@@ -591,7 +593,7 @@ function secHTML(sec,part,noHead,n,sid){
     return `<div class="item${slut?' is-slut':''}"${ix}><span class="no">${no}</span><div><div class="nm">${fmtName(it.name)}</div>${it.desc?`<div class="ds">${esc(it.desc)}</div>`:''}</div>${prices}</div>`;
   }).join('');
   const foot=(part!==0&&sec.footer)?`<div class="footer">${esc(sec.footer)}</div>`:'';
-  return `<div class="sec${two?' two':''}">${head}${rows}${foot}</div>`;
+  return `<div class="sec${two?' two':''}${sid?' sec-'+sid:''}">${head}${rows}${foot}</div>`;
 }
 function applyScreen(b){
   const cfg=state.screens[b.key]||SCREEN_DEF;
