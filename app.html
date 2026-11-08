@@ -22,6 +22,8 @@
   color-scheme: dark;
 }
 html,body{background:var(--ink);color:var(--text);margin:0}
+/* iPhone/Android: never enlarge small text on their own (it breaks the TV layout in the phone preview) */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 [hidden]{display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
