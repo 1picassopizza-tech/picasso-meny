@@ -78,6 +78,8 @@ button,input,select{font:inherit;color:inherit}
 .note{margin:0;text-align:center;font-family:var(--f-desc);font-size:calc(var(--k)*27px);font-weight:600;line-height:1.15;color:var(--board-desc);text-shadow:0 2px 6px var(--shadow)}
 .labels,.item{display:grid;grid-template-columns:calc(var(--k)*46px) minmax(0,1fr) auto;column-gap:calc(var(--k)*12px);align-items:baseline}
 .two .labels,.two .item{grid-template-columns:calc(var(--k)*30px) minmax(0,1fr) calc(var(--k)*82px) calc(var(--k)*92px)}
+/* Bar screen: wine and drinks rows start at the same place as the rows below them */
+.board-bar .two .labels,.board-bar .two .item{grid-template-columns:calc(var(--k)*46px) minmax(0,1fr) calc(var(--k)*82px) calc(var(--k)*92px)}
 .labels span{font-family:var(--f-desc);font-size:calc(var(--k)*23px);font-weight:600;line-height:1.05;text-align:center;color:var(--board-desc);white-space:pre-line}
 .no{font-family:var(--f-desc);font-weight:500;font-size:calc(var(--k)*24px);color:var(--board-num);text-align:end;text-shadow:0 2px 6px var(--shadow)}
 .nm{font-family:var(--f-item);font-weight:600;font-size:calc(var(--k)*31px);line-height:1.08;text-transform:uppercase;letter-spacing:.01em;text-shadow:0 2px 8px var(--shadow)}
