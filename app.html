@@ -1098,7 +1098,7 @@ function onClick(e){
     let no='';
     if(sec.numbered){const all=Object.values(state.sections).filter(s=>s.numbered).flatMap(s=>s.items.map(i=>+i.no||0));no=String(Math.max(0,...all)+1);}
     const it={id:nid(),no,name:'Ny rätt',desc:'',price:'',price2:'',state:'on'};
-    sec.items.push(it); openSet.add(sid); rebuildCard(sid);
+    sec.items.push(it); openSet.add(sid); rebuildCard(sid); if(sec.numbered) renumber();
     const inp=document.getElementById(it.id+'-name');inp.focus();inp.select();
     queueSave();rerender();return;
   }
@@ -1106,16 +1106,24 @@ function onClick(e){
   if(act==='up'||act==='down'){
     const j=act==='up'?i-1:i+1; if(j<0||j>=sec.items.length) return;
     [sec.items[i],sec.items[j]]=[sec.items[j],sec.items[i]];
-    rebuildCard(sid);
+    rebuildCard(sid); if(sec.numbered) renumber();
     const again=document.querySelector(`.row[data-id="${row.dataset.id}"] [data-act="${act}"]`);
     (again&&!again.disabled?again:document.getElementById(row.dataset.id+'-name')).focus();
     queueSave();rerender();
   }
   if(act==='del'){
-    const it=sec.items.splice(i,1)[0]; rebuildCard(sid);
+    const it=sec.items.splice(i,1)[0]; rebuildCard(sid); if(sec.numbered) renumber();
     undo={sid,i,it}; queueSave(); rerender();
-    toast(`"${it.name}" togs bort`,{label:'Ångra',run:()=>{if(!undo)return;state.sections[undo.sid].items.splice(undo.i,0,undo.it);rebuildCard(undo.sid);undo=null;queueSave();rerender();}});
+    toast(`"${it.name}" togs bort`,{label:'Ångra',run:()=>{if(!undo)return;state.sections[undo.sid].items.splice(undo.i,0,undo.it);rebuildCard(undo.sid);if(state.sections[undo.sid].numbered)renumber();undo=null;queueSave();rerender();}});
   }
+}
+/* Numbered sections (Pizza, Special, Inbakad): numbers follow the order in the list, 1, 2, 3 … across the sections.
+   Run after an item is moved, added or removed, so a pizza moved up with the arrow also gets its new number. */
+function renumber(){
+  let n=0;
+  for(const sid of SCREENS.pizza.order){const sec=state.sections[sid];if(!sec||!sec.numbered)continue;
+    for(const it of sec.items){n++;it.no=String(n);}}
+  for(const sid of SCREENS.pizza.order) if(state.sections[sid]?.numbered) rebuildCard(sid);
 }
 function bulk(sign){
   const amt=Math.abs(parseInt($('#bulk-amt').value,10)||0); if(!amt) return;
