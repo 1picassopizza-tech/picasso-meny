@@ -57,6 +57,23 @@ button,input,select{font:inherit;color:inherit}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
 .board-mat .content{grid-template-columns:1.05fr 1fr 1.2fr .85fr;column-gap:40px}
 .board-bar .content{grid-template-columns:1fr 1fr 1fr;column-gap:64px}
+/* Tips screen (Veckans tips / Afterwork): two offer cards side by side, photo on top */
+.board-tips .content{grid-template-columns:1fr 1fr;column-gap:72px;padding:44px 72px 50px}
+.board-tips .content.solo{grid-template-columns:minmax(0,1240px);justify-content:center}
+.promo{--k:1.3;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;min-width:0}
+.promo .plank{flex:none}
+.promo .pimg{flex:1 1 auto;min-height:0;width:100%;margin:22px 0 18px;border-radius:20px;background:#0e1013 center/cover no-repeat;
+  box-shadow:0 14px 44px rgba(0,0,0,.7),0 0 0 3px rgba(247,223,163,.6)}
+.promo .pname{flex:none;max-width:100%;font-family:var(--f-display);font-size:84px;line-height:1.05;letter-spacing:.03em;color:#fff;text-transform:uppercase;white-space:nowrap;text-align:center;text-shadow:0 4px 14px #000}
+.promo .pdesc{flex:none;margin-top:8px;max-width:94%;font-family:var(--f-desc);font-weight:600;font-size:36px;line-height:1.2;color:var(--board-desc);text-align:center;text-shadow:0 2px 8px #000;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.promo .prow{flex:none;display:flex;align-items:center;justify-content:center;gap:36px;margin-top:20px}
+.promo .pprice{font-family:var(--f-display);font-size:92px;line-height:1;color:var(--cream);padding:12px 34px 8px;border:3px solid var(--cream);border-radius:16px;background:rgba(0,0,0,.4);text-shadow:0 4px 14px #000;white-space:nowrap}
+.promo .pwhen{font-family:var(--f-item);font-weight:600;font-size:34px;line-height:1.3;letter-spacing:.07em;color:#fff;text-transform:uppercase;text-shadow:0 2px 8px #000;border-left:3px solid var(--cream);padding-left:30px}
+.promo-thumb{width:220px;aspect-ratio:16/10;border-radius:8px;background:#0e1013 center/cover no-repeat;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:13px}
+.promo-img{display:flex;gap:14px;align-items:center;flex-wrap:wrap;grid-column:1/-1}
+.promo-img .btns{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.chk{display:flex;gap:8px;align-items:center;grid-column:1/-1}
 .content.has-span{grid-template-rows:auto minmax(0,1fr)}
 .spanhead{--k:1;grid-row:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);padding-bottom:calc(var(--k)*12px)}
 .board .content .spanhead .plank{align-self:center}
@@ -384,6 +401,26 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
       </div>
       </details>
     </div>
+    <div class="scard" data-screen="tips">
+      <div class="scard-head"><strong>Tipsskärm</strong><a class="btn small" href="/tips">Öppna skärmen</a></div>
+      <div class="pv" id="pv-tips"></div>
+      <div class="linkrow"><code id="link-tips"></code><a class="btn small" href="/tips" target="_blank" rel="noopener">Öppna i nytt fönster ↗</a></div>
+      <details class="sset" id="sset-tips">
+      <summary><span>Inställningar</span><small>Stil, bakgrund och text</small></summary>
+      <div class="sset-body">
+      <div class="sts" role="group" aria-label="Menystil tipsskärm"></div>
+      <div class="bgs" role="group" aria-label="Bakgrund tipsskärm"></div>
+      <div class="vidrow" id="vidrow-tips" hidden>
+        <label class="fld"><span>Videolänk (.mp4)</span><input class="inp" id="vid-tips" data-vid="tips" placeholder="/videos/eld.mp4 eller https://…/video.mp4"></label>
+        <p class="hint">Lägg mp4-filen i mappen <b>public/videos</b> och publicera, skriv sedan t.ex. <b>/videos/eld.mp4</b>. Eller klistra in en direktlänk till en mp4-fil. Videon spelas utan ljud och upprepas.</p>
+      </div>
+      <label class="ctrl" id="powrow-tips"><span>Styrka</span><input type="range" min="0" max="100" step="5" id="pow-tips" data-pow="tips"><span id="powv-tips" style="width:3ch;text-align:end">60</span></label>
+      <label class="ctrl"><span>Ingredienser storlek</span><input type="range" min="80" max="180" step="10" id="ds-tips" data-ds="tips"><span id="dsv-tips" style="width:4ch;text-align:end">130%</span></label>
+      <label class="ctrl"><span>Textkontur</span><input type="range" min="0" max="8" step="1" id="ol-tips" data-ol="tips"><span id="olv-tips" style="width:3ch;text-align:end">4</span></label>
+      <label class="ctrl"><span>Mörkare bakgrund</span><input type="range" min="0" max="80" step="5" id="dim-tips" data-dim="tips"><span id="dimv-tips" style="width:3ch;text-align:end">0</span></label>
+      </div>
+      </details>
+    </div>
   </div>
 
   <h2>Meny</h2>
@@ -406,6 +443,7 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
     <button class="tab" role="tab" data-tab="pizza" aria-selected="true" type="button">Pizzasektioner</button>
     <button class="tab" role="tab" data-tab="mat" aria-selected="false" type="button">Matsektioner</button>
     <button class="tab" role="tab" data-tab="bar" aria-selected="false" type="button">Barsektioner</button>
+    <button class="tab" role="tab" data-tab="tips" aria-selected="false" type="button">Veckans tips &amp; AW</button>
   </div>
   <div id="sections"></div>
 </div>
@@ -444,9 +482,17 @@ function barSections(){return {
   shots:S('','',[['','Veckans drink','',105],['','Kaffedrinkar','',125],['','Hotshot','',100],['','Shotbricka','',105]]),
   sprit:S('Sprit','',[['','Vodka','','22/cl'],['','Gin','','22/cl'],['','Tequila','','25/cl'],['','Whiskey','','30/cl'],['','Jägermeister','','22/cl'],['','Sambuca','','22/cl'],['','Fireball','','22/cl']])
 };}
+/* Tips screen offers. img = example photo link; an uploaded photo (menu/img_tips, menu/img_aw) is shown instead */
+const PROMO_KEYS=['tips','aw'];
+function promoDefaults(){return {
+  tips:{on:true,title:'Veckans tips',name:'Husets planka',desc:'200g Black Angus ryggbiff med klassiska tillbehör',price:'199',when:'Fredag–Lördag\n15.00–22.00',
+    img:'https://images.unsplash.com/photo-1600891964092-4316c288032e?fm=jpg&q=75&w=1400'},
+  aw:{on:true,title:'Afterwork',name:'AW-paket',desc:'2 glas öl eller vin + nachos för 2 personer',price:'249',when:'Måndag–Fredag\n15.00–18.00',
+    img:'https://images.unsplash.com/photo-1702725365144-6e8584ea54e4?fm=jpg&q=75&w=1400'}
+};}
 function defaults(){
   uid=1;
-  return {v:2,screens:{pizza:{...SCREEN_DEF},mat:{...SCREEN_DEF},bar:{...SCREEN_DEF,bg:'rok'}},sections:{...barSections(),
+  return {v:2,promos:promoDefaults(),screens:{pizza:{...SCREEN_DEF},mat:{...SCREEN_DEF},bar:{...SCREEN_DEF,bg:'rok'},tips:{...SCREEN_DEF,bg:'rok'}},sections:{...barSections(),
   pizza:S('Pizza','tomatsås & ost ingår till samtliga pizzor',[
     [1,'Margherita','tomatsås & ost',125],[2,'Funghi','champinjoner',125],[3,'Vesuvio','skinka',125],[4,'Pescatore','tonfisk',125],
     [5,'Capricciosa','skinka, champinjoner',125],[6,'Hawaii','skinka, ananas',125],[7,'La Bussola','skinka, räkor',125],
@@ -519,6 +565,7 @@ const SCREENS={
   mat:{name:'Matskärm',order:['starters','favorites','grill','pasta','kebab','smash','kyckling','burgare','dessert','salad'],
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
     cols:[[['starters'],['favorites'],['grill']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['dessert']]]},
+  tips:{name:'Tipsskärm',order:[],promo:true},
   bar:{name:'Barskärm',order:['ol','sprit','whisky','vin','bubbel','cider','drinkar','shots'],
     cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider'],['drinkar'],['shots']]]}
 };
@@ -534,7 +581,11 @@ function normalize(s){
   if(!s||!s.sections) return defaults();
   if(!s.screens) s.screens={};
   if(!s.screens.bar) s.screens.bar={bg:'rok'};
-  for(const k of ['pizza','mat','bar']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  if(!s.screens.tips) s.screens.tips={...s.screens.mat,bg:(s.screens.mat&&s.screens.mat.bg)||'rok'};
+  for(const k of ['pizza','mat','bar','tips']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  // Tips screen offers (added later)
+  if(!s.promos){s.promos=promoDefaults();}
+  for(const k of PROMO_KEYS) if(!s.promos[k]) s.promos[k]=promoDefaults()[k];
   // Sections added after launch: create them empty so older saved menus still work
   if(!s.sections.whisky) s.sections.whisky={title:'Whisky',note:'',footer:'',numbered:false,labels:null,items:[]};
   if(!s.sections.kyckling) s.sections.kyckling={title:'Kycklingburgare',note:'',footer:'',numbered:false,labels:['Endast\nburgare','Med\npommes'],items:[]};
@@ -656,6 +707,7 @@ function applyScreen(b){
 }
 function renderBoard(b){
   applyScreen(b);
+  if(b.key==='tips'){renderTips(b);return;}
   const scr=SCREENS[b.key], cfg=state.screens[b.key]||{};
   const three=scr.cols3&&(+cfg.split||3)===3;
   const cols=three?scr.cols3:scr.cols;
@@ -916,6 +968,24 @@ function loop(ts){
 
 /* ---------- stages ---------- */
 const boards=[];
+/* ---------- tips screen ---------- */
+const imgs={};
+PROMO_KEYS.forEach(k=>{try{imgs[k]=localStorage.getItem('pm_img_'+k)||'';}catch(e){imgs[k]='';}});
+const promoSrc=k=>{const p=state.promos[k]||{};return imgs[k]||(p.imgOff?'':p.img)||'';};
+function renderTips(b){
+  const P=state.promos||{},ks=PROMO_KEYS.filter(k=>P[k]&&P[k].on!==false);
+  b.content.className='content'+(ks.length===1?' solo':'');
+  b.content.innerHTML=ks.map(k=>{const p=P[k],src=promoSrc(k);
+    return `<div class="promo">
+      ${p.title?`<div class="plank">${esc(p.title)}</div>`:''}
+      ${src?`<div class="pimg" style="background-image:url('${esc(src)}')"></div>`:''}
+      ${p.name?`<div class="pname">${esc(p.name)}</div>`:''}
+      ${p.desc?`<div class="pdesc">${esc(p.desc).replace(/\n/g,'<br>')}</div>`:''}
+      <div class="prow">${p.price?`<span class="pprice">${fmtP(p.price)}</span>`:''}${p.when?`<span class="pwhen">${esc(p.when).replace(/\n/g,'<br>')}</span>`:''}</div>
+    </div>`;}).join('')||'<div class="promo"><div class="pname">Välkommen!</div></div>';
+  // A long dish name gets smaller instead of being cut off
+  b.content.querySelectorAll('.pname').forEach(el=>{let fs=84;el.style.fontSize='';while(el.scrollWidth>el.clientWidth+1&&fs>40){fs-=4;el.style.fontSize=fs+'px';}});
+}
 function mount(host,key,fill){
   host.innerHTML='';
   const stage=document.createElement('div');stage.className='stage';
@@ -994,6 +1064,33 @@ function startSync(){
   },()=>{clearTimeout(timer);connected=false;setStatus('offline');setTimeout(startSync,retryMs);retryMs=Math.min(retryMs*2,120000);});
 }
 
+/* Uploaded offer photos live in their own documents (menu/img_tips, menu/img_aw) so the menu stays small */
+let imgsWatched=false;
+function watchImgs(){
+  if(imgsWatched) return; imgsWatched=true;
+  PROMO_KEYS.forEach(k=>onSnapshot(doc(fdb,'menu','img_'+k),snap=>{
+    const d=snap.exists()?snap.data():null, v=(d&&typeof d.data==='string')?d.data:'';
+    if(v===imgs[k]) return; imgs[k]=v;
+    try{v?localStorage.setItem('pm_img_'+k,v):localStorage.removeItem('pm_img_'+k);}catch(e){}
+    rerender(); if(curTab==='tips'&&!$('#admin').hidden) refreshPromoThumbs();
+  },()=>{}));
+}
+/* Phone photos are big: shrink to max 1600px JPEG under ~850 kB (a database document holds at most 1 MB) */
+async function shrinkImg(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const im=await new Promise((ok,bad)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=bad;i.src=url;});
+    let max=1600,q=.82,out='';
+    for(let t=0;t<8;t++){
+      const sc=Math.min(1,max/im.naturalWidth,max/im.naturalHeight),w=Math.round(im.naturalWidth*sc),h=Math.round(im.naturalHeight*sc);
+      const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);
+      out=c.toDataURL('image/jpeg',q); if(out.length<850000) return out;
+      if(q>.6) q-=.1; else max=Math.round(max*.8);
+    }
+    return out;
+  }finally{URL.revokeObjectURL(url);}
+}
+
 /* ---------- admin: screens ---------- */
 const STATES=[['on','Synlig'],['slut','Slut idag'],['hidden','Dold']];
 function buildScreenControls(){
@@ -1008,7 +1105,7 @@ function buildScreenControls(){
   syncScreenControls();
 }
 function syncScreenControls(){
-  for(const key of ['pizza','mat','bar']){
+  for(const key of ['pizza','mat','bar','tips']){
     const cfg=state.screens[key];
     document.querySelectorAll(`.scard[data-screen="${key}"] .bg`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===cfg.bg)));
     document.querySelectorAll(`.scard[data-screen="${key}"] .st`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===(cfg.theme||'klassisk'))));
@@ -1060,16 +1157,60 @@ function cardHTML(sid){
       <button class="btn small add" type="button" data-act="add">＋ Lägg till rätt</button>
     </div></details>`;
 }
+function promoHTML(k){
+  const p=state.promos[k],src=promoSrc(k),ml=v=>esc(String(v||'').replace(/\n/g,' / '));
+  return `<details class="card" data-pk="${k}" open>
+    <summary><span class="ttl">${esc(p.title||(k==='aw'?'Afterwork':'Veckans tips'))}</span><span class="cnt">${p.on!==false?'Visas':'Dold'}</span></summary>
+    <div class="card-body"><div class="sec-fields">
+      <label class="chk"><input type="checkbox" id="p-${k}-on" data-pf="on" ${p.on!==false?'checked':''}> Visa på skärmen</label>
+      <label class="fld"><span>Rubrik</span><input class="inp" id="p-${k}-title" data-pf="title" value="${esc(p.title)}"></label>
+      <label class="fld"><span>Namn på rätten / paketet</span><input class="inp" id="p-${k}-name" data-pf="name" value="${esc(p.name)}"></label>
+      <label class="fld" style="grid-column:1/-1"><span>Beskrivning (/ = ny rad)</span><input class="inp" id="p-${k}-desc" data-pf="desc" value="${ml(p.desc)}"></label>
+      <label class="fld"><span>Pris</span><input class="inp" id="p-${k}-price" data-pf="price" value="${esc(p.price)}" inputmode="numeric"></label>
+      <label class="fld"><span>Dagar och tid (/ = ny rad)</span><input class="inp" id="p-${k}-when" data-pf="when" value="${ml(p.when)}"></label>
+      <div class="promo-img"><div class="promo-thumb" data-thumb="${k}" style="${src?`background-image:url('${esc(src)}')`:''}">${src?'':'Ingen bild'}</div>
+        <div class="btns"><label class="btn small">Byt bild<input type="file" accept="image/*" data-pimg="${k}" hidden></label>
+        <button class="btn small" type="button" data-pact="delimg" data-k="${k}">Ta bort bild</button>
+        <small class="hint">${imgs[k]?'Egen bild':(src?'Exempelbild – byt till en egen':'')}</small></div></div>
+    </div></div></details>`;
+}
+function refreshPromoThumbs(){PROMO_KEYS.forEach(k=>{const old=document.querySelector(`.card[data-pk="${k}"]`);if(old)old.outerHTML=promoHTML(k);});}
+async function onPromoImg(input){
+  const k=input.dataset.pimg,f=input.files&&input.files[0]; if(!f) return;
+  if(!canEdit){toast('Logga in för att byta bild');return;}
+  toast('Laddar upp bilden…');
+  try{
+    const data=await shrinkImg(f);
+    await setDoc(doc(fdb,'menu','img_'+k),{data,at:new Date().toISOString()});
+    imgs[k]=data; try{localStorage.setItem('pm_img_'+k,data);}catch(e){}
+    state.promos[k].imgOff=false; queueSave(); refreshPromoThumbs(); rerender(); toast('Bilden är sparad');
+  }catch(e){toast('Bilden kunde inte sparas');}
+}
+async function delPromoImg(k){
+  if(!canEdit){toast('Logga in för att ta bort bilden');return;}
+  try{
+    if(imgs[k]) await setDoc(doc(fdb,'menu','img_'+k),{data:'',at:new Date().toISOString()});
+    imgs[k]=''; try{localStorage.removeItem('pm_img_'+k);}catch(e){}
+    state.promos[k].imgOff=true; queueSave(); refreshPromoThumbs(); rerender(); toast('Bilden togs bort');
+  }catch(e){toast('Bilden kunde inte tas bort');}
+}
 function buildEditor(){
   const ae=document.activeElement,focusId=ae&&ae.id;
   let a=null,z=null;try{a=ae.selectionStart;z=ae.selectionEnd;}catch(e){}
-  $('#sections').innerHTML=SCREENS[curTab].order.map(cardHTML).join('');
+  $('#sections').innerHTML=SCREENS[curTab].promo?PROMO_KEYS.map(promoHTML).join(''):SCREENS[curTab].order.map(cardHTML).join('');
   // Keep the text cursor where it was
   if(focusId){const el=document.getElementById(focusId);if(el){el.focus();try{if(a!=null)el.setSelectionRange(a,z);}catch(e){}}}
 }
 function rebuildCard(sid){const old=document.querySelector(`.card[data-sid="${sid}"]`);if(!old)return;old.outerHTML=cardHTML(sid);}
 function onEdit(e){
   const t=e.target;
+  if(t.dataset.pf){
+    const k=t.closest('.card').dataset.pk,p=state.promos[k],f=t.dataset.pf;
+    if(f==='on'){p.on=t.checked;t.closest('.card').querySelector('.cnt').textContent=t.checked?'Visas':'Dold';}
+    else p[f]=(f==='desc'||f==='when')?t.value.replace(/\s*\/\s*/g,'\n'):t.value;
+    if(f==='title') t.closest('.card').querySelector('.ttl').textContent=t.value||'(utan rubrik)';
+    queueSave();rerender();return;
+  }
   if(t.dataset.sf){
     const card=t.closest('.card'),sid=card.dataset.sid,sec=state.sections[sid],f=t.dataset.sf;
     const multi=t.value.replace(/\s*\/\s*/g,'\n');
@@ -1191,15 +1332,16 @@ function route(){
   if(h==='tv'){const q=new URLSearchParams(location.search);let d=SCREENS[q.get('d')]?q.get('d'):'pizza';
     if(q.has('pick')){try{localStorage.setItem('tvscreen',d);}catch(e){}}else{try{const v=localStorage.getItem('tvscreen');if(SCREENS[v])d=v;}catch(e){}}
     location.replace('/'+d);return;}
-  if(h==='pizza'||h==='mat'||h==='bar'){
-    $('#admin').hidden=true;$('#screen').hidden=false;$('#pv-pizza').innerHTML='';$('#pv-mat').innerHTML='';$('#pv-bar').innerHTML='';
+  if(h==='pizza'||h==='mat'||h==='bar'||h==='tips'){
+    $('#admin').hidden=true;$('#screen').hidden=false;$('#pv-pizza').innerHTML='';$('#pv-mat').innerHTML='';$('#pv-bar').innerHTML='';$('#pv-tips').innerHTML='';
+    if(h==='tips') watchImgs();
     mount($('#screen-host'),h,true);wake();
     try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>{wakeLock=l;}).catch(()=>{});}catch(e){}
     keepAwake();
     const n=new Date(),r=new Date(n);r.setHours(4,0,0,0);if(r<=n)r.setDate(r.getDate()+1);setTimeout(()=>location.reload(),r-n);
   }else{
     $('#screen').hidden=true;$('#admin').hidden=false;$('#screen-host').innerHTML='';
-    mount($('#pv-pizza'),'pizza');mount($('#pv-mat'),'mat');mount($('#pv-bar'),'bar');buildScreenControls();buildEditor();
+    mount($('#pv-pizza'),'pizza');mount($('#pv-mat'),'mat');mount($('#pv-bar'),'bar');mount($('#pv-tips'),'tips');watchImgs();buildScreenControls();buildEditor();
   }
 }
 function wake(){
@@ -1209,7 +1351,8 @@ function wake(){
 
 /* ---------- wiring ---------- */
 $('#sections').addEventListener('input',onEdit);
-$('#sections').addEventListener('change',e=>{if(e.target.tagName==='SELECT')onEdit(e);});
+$('#sections').addEventListener('change',e=>{if(e.target.tagName==='SELECT')onEdit(e);else if(e.target.dataset.pimg)onPromoImg(e.target);});
+$('#sections').addEventListener('click',e=>{const b=e.target.closest('[data-pact]');if(b&&b.dataset.pact==='delimg')delPromoImg(b.dataset.k);});
 $('#sections').addEventListener('click',onClick);
 $('#sections').addEventListener('toggle',e=>{const c=e.target.closest&&e.target.closest('.card');if(c&&e.target===c){c.open?openSet.add(c.dataset.sid):openSet.delete(c.dataset.sid);}},true);
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{curTab=t.dataset.tab;document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',String(x===t)));buildEditor();}));
@@ -1224,7 +1367,7 @@ document.querySelectorAll('.scard').forEach(card=>{
   card.querySelector('[data-dim]').addEventListener('input',e=>{state.screens[key].dim=+e.target.value;$('#dimv-'+key).textContent=e.target.value+'%';redrawFx();queueSave();});
   let vt; card.querySelector('[data-vid]').addEventListener('input',e=>{state.screens[key].video=e.target.value.trim();clearTimeout(vt);vt=setTimeout(redrawFx,600);queueSave();});
 });
-['pizza','mat','bar'].forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
+['pizza','mat','bar','tips'].forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
   try{if(localStorage.getItem('sset-'+k)==='1')d.open=true;}catch(e){}
   d.addEventListener('toggle',()=>{try{localStorage.setItem('sset-'+k,d.open?'1':'0');}catch(e){}});});
 document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
@@ -1268,21 +1411,21 @@ async function checkVersion(){
 }
 checkVersion();setInterval(checkVersion,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVersion();});
-/* TV app: the Back button shows a screen choice (Pizza / Mat / Bar); with no choice the menu stays after 8 s */
+/* TV app: the Back button shows a screen choice (Pizza / Mat / Bar / Veckans tips); with no choice the menu stays after 8 s */
 window.tvBack=function(){
   if($('#screen').hidden)return;
   let ov=document.getElementById('tvchoose');
   if(ov){ov.remove();}
   ov=document.createElement('div');ov.id='tvchoose';
   ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(10,10,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;font-family:Arial,sans-serif;color:#fff';
-  const LIST=['pizza','mat','bar'],p0=location.pathname.replace(/\//g,''),cur=LIST.includes(p0)?p0:'pizza';let sel=cur,left=8;
-  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:flex;gap:40px"><button data-s="pizza">Pizzaskärm</button><button data-s="mat">Matskärm</button><button data-s="bar">Barskärm</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
+  const LIST=['pizza','mat','bar','tips'],p0=location.pathname.replace(/\//g,''),cur=LIST.includes(p0)?p0:'pizza';let sel=cur,left=8;
+  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:flex;gap:32px"><button data-s="pizza">Pizza</button><button data-s="mat">Mat</button><button data-s="bar">Bar</button><button data-s="tips">Veckans tips</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
   const btns=[...ov.querySelectorAll('button')];
-  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 50px Arial;color:#fff;border-radius:24px;padding:40px 60px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
+  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 48px Arial;color:#fff;border-radius:24px;padding:40px 50px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
     ov.querySelector('#tvmsg').textContent='◀ ▶ byt  ·  OK välj  ·  stängs om '+left+' s';};
   const close=()=>{clearInterval(t);document.removeEventListener('keydown',key,true);ov.remove();};
   const go=s2=>{close();try{localStorage.setItem('tvscreen',s2);}catch(e){}if(s2!==cur)location.href='/'+s2;};
-  const key=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){sel=LIST[(LIST.indexOf(sel)+(e.key==='ArrowRight'?1:2))%3];left=8;draw();}
+  const key=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){sel=LIST[(LIST.indexOf(sel)+(e.key==='ArrowRight'?1:LIST.length-1))%LIST.length];left=8;draw();}
     else if(e.key==='Enter'||e.keyCode===13||e.keyCode===23){go(sel);}
     else if(e.key==='Escape'||e.key==='GoBack'||e.key==='BrowserBack'){close();}
     e.preventDefault();e.stopPropagation();};
