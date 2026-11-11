@@ -58,8 +58,21 @@ button,input,select{font:inherit;color:inherit}
 .board-mat .content{grid-template-columns:1.05fr 1fr 1.2fr .85fr;column-gap:40px}
 .board-bar .content{grid-template-columns:1fr 1fr 1fr;column-gap:64px}
 /* Tips screen (Veckans tips / Afterwork): two offer cards side by side, photo on top */
-.board-tips .content{grid-template-columns:1fr 1fr;column-gap:72px;padding:44px 72px 50px}
-.board-tips .content.solo{grid-template-columns:minmax(0,1240px);justify-content:center}
+.board-promo .content{grid-template-columns:1fr 1fr;column-gap:72px;padding:44px 72px 50px}
+/* One offer alone: big photo on the left, text on the right */
+.board-promo .content.solo{grid-template-columns:1fr;padding:56px 72px}
+.content.solo .promo{display:grid;grid-template-columns:1.12fr 1fr;grid-template-rows:1fr auto auto 1fr;column-gap:64px;align-items:center;justify-items:center}
+.content.solo .promo .pimg{grid-column:1;grid-row:1/-1;align-self:stretch;margin:0;height:100%}
+.content.solo .promo .plank{grid-column:2;grid-row:2;zoom:1.3}
+.content.solo .promo .ptext{grid-column:2;grid-row:3;margin-top:28px}
+.content.solo .promo .pname{font-size:112px;white-space:normal;line-height:1}
+.content.solo .promo .pdesc{font-size:44px;margin-top:18px;-webkit-line-clamp:3}
+.content.solo .promo .prow{flex-direction:column;gap:26px;margin-top:34px}
+.content.solo .promo .pprice{font-size:128px}
+.content.solo .promo .pwhen{font-size:42px;border-left:0;padding-left:0;text-align:center}
+.content.solo .promo.noimg{grid-template-columns:1fr}
+.content.solo .promo.noimg .plank,.content.solo .promo.noimg .ptext{grid-column:1}
+.promo .ptext{display:flex;flex-direction:column;align-items:center;min-width:0;max-width:100%}
 .promo{--k:1.3;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;min-width:0}
 .promo .plank{flex:none}
 .promo .pimg{flex:1 1 auto;min-height:0;width:100%;margin:22px 0 18px;border-radius:20px;background:#0e1013 center/cover no-repeat;
@@ -421,6 +434,46 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
       </div>
       </details>
     </div>
+    <div class="scard" data-screen="veckanstips">
+      <div class="scard-head"><strong>Veckans tips-skärm</strong><a class="btn small" href="/veckanstips">Öppna skärmen</a></div>
+      <div class="pv" id="pv-veckanstips"></div>
+      <div class="linkrow"><code id="link-veckanstips"></code><a class="btn small" href="/veckanstips" target="_blank" rel="noopener">Öppna i nytt fönster ↗</a></div>
+      <details class="sset" id="sset-veckanstips">
+      <summary><span>Inställningar</span><small>Stil, bakgrund och text</small></summary>
+      <div class="sset-body">
+      <div class="sts" role="group" aria-label="Menystil veckans tips-skärm"></div>
+      <div class="bgs" role="group" aria-label="Bakgrund veckans tips-skärm"></div>
+      <div class="vidrow" id="vidrow-veckanstips" hidden>
+        <label class="fld"><span>Videolänk (.mp4)</span><input class="inp" id="vid-veckanstips" data-vid="veckanstips" placeholder="/videos/eld.mp4 eller https://…/video.mp4"></label>
+        <p class="hint">Lägg mp4-filen i mappen <b>public/videos</b> och publicera, skriv sedan t.ex. <b>/videos/eld.mp4</b>. Eller klistra in en direktlänk till en mp4-fil. Videon spelas utan ljud och upprepas.</p>
+      </div>
+      <label class="ctrl" id="powrow-veckanstips"><span>Styrka</span><input type="range" min="0" max="100" step="5" id="pow-veckanstips" data-pow="veckanstips"><span id="powv-veckanstips" style="width:3ch;text-align:end">60</span></label>
+      <label class="ctrl"><span>Ingredienser storlek</span><input type="range" min="80" max="180" step="10" id="ds-veckanstips" data-ds="veckanstips"><span id="dsv-veckanstips" style="width:4ch;text-align:end">130%</span></label>
+      <label class="ctrl"><span>Textkontur</span><input type="range" min="0" max="8" step="1" id="ol-veckanstips" data-ol="veckanstips"><span id="olv-veckanstips" style="width:3ch;text-align:end">4</span></label>
+      <label class="ctrl"><span>Mörkare bakgrund</span><input type="range" min="0" max="80" step="5" id="dim-veckanstips" data-dim="veckanstips"><span id="dimv-veckanstips" style="width:3ch;text-align:end">0</span></label>
+      </div>
+      </details>
+    </div>
+    <div class="scard" data-screen="afterwork">
+      <div class="scard-head"><strong>Afterwork-skärm</strong><a class="btn small" href="/afterwork">Öppna skärmen</a></div>
+      <div class="pv" id="pv-afterwork"></div>
+      <div class="linkrow"><code id="link-afterwork"></code><a class="btn small" href="/afterwork" target="_blank" rel="noopener">Öppna i nytt fönster ↗</a></div>
+      <details class="sset" id="sset-afterwork">
+      <summary><span>Inställningar</span><small>Stil, bakgrund och text</small></summary>
+      <div class="sset-body">
+      <div class="sts" role="group" aria-label="Menystil afterwork-skärm"></div>
+      <div class="bgs" role="group" aria-label="Bakgrund afterwork-skärm"></div>
+      <div class="vidrow" id="vidrow-afterwork" hidden>
+        <label class="fld"><span>Videolänk (.mp4)</span><input class="inp" id="vid-afterwork" data-vid="afterwork" placeholder="/videos/eld.mp4 eller https://…/video.mp4"></label>
+        <p class="hint">Lägg mp4-filen i mappen <b>public/videos</b> och publicera, skriv sedan t.ex. <b>/videos/eld.mp4</b>. Eller klistra in en direktlänk till en mp4-fil. Videon spelas utan ljud och upprepas.</p>
+      </div>
+      <label class="ctrl" id="powrow-afterwork"><span>Styrka</span><input type="range" min="0" max="100" step="5" id="pow-afterwork" data-pow="afterwork"><span id="powv-afterwork" style="width:3ch;text-align:end">60</span></label>
+      <label class="ctrl"><span>Ingredienser storlek</span><input type="range" min="80" max="180" step="10" id="ds-afterwork" data-ds="afterwork"><span id="dsv-afterwork" style="width:4ch;text-align:end">130%</span></label>
+      <label class="ctrl"><span>Textkontur</span><input type="range" min="0" max="8" step="1" id="ol-afterwork" data-ol="afterwork"><span id="olv-afterwork" style="width:3ch;text-align:end">4</span></label>
+      <label class="ctrl"><span>Mörkare bakgrund</span><input type="range" min="0" max="80" step="5" id="dim-afterwork" data-dim="afterwork"><span id="dimv-afterwork" style="width:3ch;text-align:end">0</span></label>
+      </div>
+      </details>
+    </div>
   </div>
 
   <h2>Meny</h2>
@@ -566,6 +619,8 @@ const SCREENS={
     // Balanced so all four columns are about equally tall: starters+pasta | mains+kebab | burgers | salad+dessert
     cols:[[['starters'],['favorites'],['grill']],[['pasta'],['kebab']],[['smash'],['kyckling'],['burgare']],[['salad'],['dessert']]]},
   tips:{name:'Tipsskärm',order:[],promo:true},
+  veckanstips:{name:'Veckans tips',order:[],promo:true,only:'tips'},
+  afterwork:{name:'Afterwork',order:[],promo:true,only:'aw'},
   bar:{name:'Barskärm',order:['ol','sprit','whisky','vin','bubbel','cider','drinkar','shots'],
     cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider'],['drinkar'],['shots']]]}
 };
@@ -577,12 +632,14 @@ const ZOOM_OK=(()=>{try{return CSS.supports('zoom','0.5');}catch(e){return false
 
 /* ---------- state ---------- */
 let state;
+const SCREEN_KEYS=['pizza','mat','bar','tips','veckanstips','afterwork'];
 function normalize(s){
   if(!s||!s.sections) return defaults();
   if(!s.screens) s.screens={};
   if(!s.screens.bar) s.screens.bar={bg:'rok'};
   if(!s.screens.tips) s.screens.tips={...s.screens.mat,bg:(s.screens.mat&&s.screens.mat.bg)||'rok'};
-  for(const k of ['pizza','mat','bar','tips']) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  for(const k of ['veckanstips','afterwork']) if(!s.screens[k]) s.screens[k]={...s.screens.tips};
+  for(const k of SCREEN_KEYS) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
   // Tips screen offers (added later)
   if(!s.promos){s.promos=promoDefaults();}
   for(const k of PROMO_KEYS) if(!s.promos[k]) s.promos[k]=promoDefaults()[k];
@@ -707,7 +764,7 @@ function applyScreen(b){
 }
 function renderBoard(b){
   applyScreen(b);
-  if(b.key==='tips'){renderTips(b);return;}
+  if(SCREENS[b.key].promo){renderTips(b);return;}
   const scr=SCREENS[b.key], cfg=state.screens[b.key]||{};
   const three=scr.cols3&&(+cfg.split||3)===3;
   const cols=three?scr.cols3:scr.cols;
@@ -973,23 +1030,25 @@ const imgs={};
 PROMO_KEYS.forEach(k=>{try{imgs[k]=localStorage.getItem('pm_img_'+k)||'';}catch(e){imgs[k]='';}});
 const promoSrc=k=>{const p=state.promos[k]||{};return imgs[k]||(p.imgOff?'':p.img)||'';};
 function renderTips(b){
-  const P=state.promos||{},ks=PROMO_KEYS.filter(k=>P[k]&&P[k].on!==false);
+  const P=state.promos||{},only=SCREENS[b.key].only,ks=PROMO_KEYS.filter(k=>(!only||k===only)&&P[k]&&P[k].on!==false);
   b.content.className='content'+(ks.length===1?' solo':'');
   b.content.innerHTML=ks.map(k=>{const p=P[k],src=promoSrc(k);
-    return `<div class="promo">
+    return `<div class="promo${src?'':' noimg'}">
       ${p.title?`<div class="plank">${esc(p.title)}</div>`:''}
       ${src?`<div class="pimg" style="background-image:url('${esc(src)}')"></div>`:''}
-      ${p.name?`<div class="pname">${esc(p.name)}</div>`:''}
+      <div class="ptext">${p.name?`<div class="pname">${esc(p.name)}</div>`:''}
       ${p.desc?`<div class="pdesc">${esc(p.desc).replace(/\n/g,'<br>')}</div>`:''}
-      <div class="prow">${p.price?`<span class="pprice">${fmtP(p.price)}</span>`:''}${p.when?`<span class="pwhen">${esc(p.when).replace(/\n/g,'<br>')}</span>`:''}</div>
-    </div>`;}).join('')||'<div class="promo"><div class="pname">Välkommen!</div></div>';
+      <div class="prow">${p.price?`<span class="pprice">${fmtP(p.price)}</span>`:''}${p.when?`<span class="pwhen">${esc(p.when).replace(/\n/g,'<br>')}</span>`:''}</div></div>
+    </div>`;}).join('')||'<div class="promo noimg"><div class="ptext"><div class="pname">Välkommen!</div></div></div>';
   // A long dish name gets smaller instead of being cut off
-  b.content.querySelectorAll('.pname').forEach(el=>{let fs=84;el.style.fontSize='';while(el.scrollWidth>el.clientWidth+1&&fs>40){fs-=4;el.style.fontSize=fs+'px';}});
+  b.content.querySelectorAll('.pname').forEach(el=>{el.style.fontSize='';let fs=parseFloat(getComputedStyle(el).fontSize)||84;
+    const solo=b.content.classList.contains('solo'),tooBig=()=>el.scrollWidth>el.clientWidth+1||(solo&&el.offsetHeight>fs*2.2);
+    while(tooBig()&&fs>40){fs-=4;el.style.fontSize=fs+'px';}});
 }
 function mount(host,key,fill){
   host.innerHTML='';
   const stage=document.createElement('div');stage.className='stage';
-  const board=document.createElement('div');board.className='board board-'+key;
+  const board=document.createElement('div');board.className='board board-'+key+(SCREENS[key].promo?' board-promo':'');
   const cv=document.createElement('canvas');cv.className='fire';cv.setAttribute('aria-hidden','true');
   const content=document.createElement('div');content.className='content';
   const vid=document.createElement('video');vid.className='bgvid';vid.muted=true;vid.loop=true;vid.playsInline=true;vid.autoplay=true;vid.setAttribute('muted','');vid.setAttribute('playsinline','');vid.hidden=true;vid.setAttribute('aria-hidden','true');
@@ -1105,7 +1164,7 @@ function buildScreenControls(){
   syncScreenControls();
 }
 function syncScreenControls(){
-  for(const key of ['pizza','mat','bar','tips']){
+  for(const key of SCREEN_KEYS){
     const cfg=state.screens[key];
     document.querySelectorAll(`.scard[data-screen="${key}"] .bg`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===cfg.bg)));
     document.querySelectorAll(`.scard[data-screen="${key}"] .st`).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.theme===(cfg.theme||'klassisk'))));
@@ -1345,16 +1404,16 @@ function route(){
   if(h==='tv'){const q=new URLSearchParams(location.search);let d=SCREENS[q.get('d')]?q.get('d'):'pizza';
     if(q.has('pick')){try{localStorage.setItem('tvscreen',d);}catch(e){}}else{try{const v=localStorage.getItem('tvscreen');if(SCREENS[v])d=v;}catch(e){}}
     location.replace('/'+d);return;}
-  if(h==='pizza'||h==='mat'||h==='bar'||h==='tips'){
-    $('#admin').hidden=true;$('#screen').hidden=false;$('#pv-pizza').innerHTML='';$('#pv-mat').innerHTML='';$('#pv-bar').innerHTML='';$('#pv-tips').innerHTML='';
-    if(h==='tips') watchImgs();
+  if(SCREEN_KEYS.includes(h)){
+    $('#admin').hidden=true;$('#screen').hidden=false;SCREEN_KEYS.forEach(k=>{$('#pv-'+k).innerHTML='';});
+    if(SCREENS[h].promo) watchImgs();
     mount($('#screen-host'),h,true);wake();
     try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(l=>{wakeLock=l;}).catch(()=>{});}catch(e){}
     keepAwake();
     const n=new Date(),r=new Date(n);r.setHours(4,0,0,0);if(r<=n)r.setDate(r.getDate()+1);setTimeout(()=>location.reload(),r-n);
   }else{
     $('#screen').hidden=true;$('#admin').hidden=false;$('#screen-host').innerHTML='';
-    mount($('#pv-pizza'),'pizza');mount($('#pv-mat'),'mat');mount($('#pv-bar'),'bar');mount($('#pv-tips'),'tips');watchImgs();buildScreenControls();buildEditor();
+    SCREEN_KEYS.forEach(k=>mount($('#pv-'+k),k));watchImgs();buildScreenControls();buildEditor();
   }
 }
 function wake(){
@@ -1380,7 +1439,7 @@ document.querySelectorAll('.scard').forEach(card=>{
   card.querySelector('[data-dim]').addEventListener('input',e=>{state.screens[key].dim=+e.target.value;$('#dimv-'+key).textContent=e.target.value+'%';redrawFx();queueSave();});
   let vt; card.querySelector('[data-vid]').addEventListener('input',e=>{state.screens[key].video=e.target.value.trim();clearTimeout(vt);vt=setTimeout(redrawFx,600);queueSave();});
 });
-['pizza','mat','bar','tips'].forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
+SCREEN_KEYS.forEach(k=>{const d=document.getElementById('sset-'+k);if(!d)return;
   try{if(localStorage.getItem('sset-'+k)==='1')d.open=true;}catch(e){}
   d.addEventListener('toggle',()=>{try{localStorage.setItem('sset-'+k,d.open?'1':'0');}catch(e){}});});
 document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
@@ -1424,17 +1483,17 @@ async function checkVersion(){
 }
 checkVersion();setInterval(checkVersion,120000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVersion();});
-/* TV app: the Back button shows a screen choice (Pizza / Mat / Bar / Veckans tips); with no choice the menu stays after 8 s */
+/* TV app: the Back button shows a screen choice (Pizza / Mat / Bar / Tips & AW / Veckans tips / Afterwork); with no choice the menu stays after 8 s */
 window.tvBack=function(){
   if($('#screen').hidden)return;
   let ov=document.getElementById('tvchoose');
   if(ov){ov.remove();}
   ov=document.createElement('div');ov.id='tvchoose';
   ov.style.cssText='position:fixed;inset:0;z-index:100;background:rgba(10,10,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px;font-family:Arial,sans-serif;color:#fff';
-  const LIST=['pizza','mat','bar','tips'],p0=location.pathname.replace(/\//g,''),cur=LIST.includes(p0)?p0:'pizza';let sel=cur,left=8;
-  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:flex;gap:32px"><button data-s="pizza">Pizza</button><button data-s="mat">Mat</button><button data-s="bar">Bar</button><button data-s="tips">Veckans tips</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
+  const LIST=SCREEN_KEYS,p0=location.pathname.replace(/\//g,''),cur=LIST.includes(p0)?p0:'pizza';let sel=cur,left=8;
+  ov.innerHTML='<div style="font:700 64px Arial;letter-spacing:.04em">PICASSO MENY</div><div style="display:grid;grid-template-columns:repeat(3,auto);gap:28px 32px"><button data-s="pizza">Pizza</button><button data-s="mat">Mat</button><button data-s="bar">Bar</button><button data-s="tips">Tips &amp; AW</button><button data-s="veckanstips">Veckans tips</button><button data-s="afterwork">Afterwork</button></div><div id="tvmsg" style="font-size:30px;color:#ccc"></div>';
   const btns=[...ov.querySelectorAll('button')];
-  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 48px Arial;color:#fff;border-radius:24px;padding:40px 50px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
+  const draw=()=>{btns.forEach(b=>{const on=b.dataset.s===sel;b.style.cssText='font:700 44px Arial;color:#fff;border-radius:22px;padding:30px 44px;border:6px solid '+(on?'#fff':'#444')+';background:'+(on?'#c0392b':'#2a2f38');});
     ov.querySelector('#tvmsg').textContent='◀ ▶ byt  ·  OK välj  ·  stängs om '+left+' s';};
   const close=()=>{clearInterval(t);document.removeEventListener('keydown',key,true);ov.remove();};
   const go=s2=>{close();try{localStorage.setItem('tvscreen',s2);}catch(e){}if(s2!==cur)location.href='/'+s2;};
