@@ -1266,6 +1266,19 @@ function renumber(){
     for(const it of sec.items){n++;it.no=String(n);}}
   for(const sid of SCREENS.pizza.order) if(state.sections[sid]?.numbered) rebuildCard(sid);
 }
+/* Typing a new number on a pizza (then leaving the field) moves it to that place; the others shift up or down */
+function moveToNumber(inp){
+  const row=inp.closest('.row'),sid=row.dataset.sid,sec=state.sections[sid]; if(!sec||!sec.numbered) return;
+  const n=parseInt(inp.value,10); if(!(n>0)) {renumber();queueSave();rerender();return;}
+  const i=sec.items.findIndex(x=>x.id===row.dataset.id); if(i<0) return;
+  const it=sec.items.splice(i,1)[0];
+  // Numbers used by the numbered sections before this one
+  let before=0; for(const k of SCREENS.pizza.order){if(k===sid)break;const o=state.sections[k];if(o&&o.numbered)before+=o.items.length;}
+  const pos=Math.max(0,Math.min(sec.items.length,n-1-before));
+  sec.items.splice(pos,0,it); renumber(); queueSave(); rerender();
+  const el=document.getElementById(it.id+'-no'); if(el) el.closest('.row').scrollIntoView({block:'center'});
+  toast(`"${it.name}" har nu nummer ${it.no}`);
+}
 function bulk(sign){
   const amt=Math.abs(parseInt($('#bulk-amt').value,10)||0); if(!amt) return;
   const scope=$('#bulk-scope').value;
@@ -1351,7 +1364,7 @@ function wake(){
 
 /* ---------- wiring ---------- */
 $('#sections').addEventListener('input',onEdit);
-$('#sections').addEventListener('change',e=>{if(e.target.tagName==='SELECT')onEdit(e);else if(e.target.dataset.pimg)onPromoImg(e.target);});
+$('#sections').addEventListener('change',e=>{if(e.target.tagName==='SELECT')onEdit(e);else if(e.target.dataset.pimg)onPromoImg(e.target);else if(e.target.dataset.f==='no')moveToNumber(e.target);});
 $('#sections').addEventListener('click',e=>{const b=e.target.closest('[data-pact]');if(b&&b.dataset.pact==='delimg')delPromoImg(b.dataset.k);});
 $('#sections').addEventListener('click',onClick);
 $('#sections').addEventListener('toggle',e=>{const c=e.target.closest&&e.target.closest('.card');if(c&&e.target===c){c.open?openSet.add(c.dataset.sid):openSet.delete(c.dataset.sid);}},true);
