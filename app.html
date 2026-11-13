@@ -627,7 +627,7 @@ const SCREENS={
   veckanstips:{name:'Veckans tips',order:[],promo:true,only:'tips'},
   afterwork:{name:'Afterwork',order:[],promo:true,only:'aw'},
   bar:{name:'Barskärm',order:['ol','sprit','whisky','vin','bubbel','cider','drinkar','shots'],
-    cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider']],[['drinkar'],['shots']]]}
+    auto:4,cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider']],[['drinkar'],['shots']]]}
 };
 const BGS=[{id:'eld',name:'Eld',m:0},{id:'glod',name:'Glöd',m:1},{id:'rok',name:'Rök',m:2},{id:'vedugn',name:'Vedugn',m:3},{id:'neon',name:'Neon',m:4},{id:'lava',name:'Lava',m:5},{id:'norrsken',name:'Norrsken',m:6},{id:'stjarnor',name:'Stjärnor',m:7},{id:'solnedgang',name:'Solnedgång',m:8},{id:'eldbild',name:'Eldbild',m:1,img:'/backgrounds/eld1.jpg'},{id:'v52314',name:'Flammor',m:-1,vid:'https://assets.mixkit.co/videos/52314/52314-1080.mp4',hd:1,dim:15},{id:'v52312',name:'Lågor',m:-1,vid:'https://assets.mixkit.co/videos/52312/52312-1080.mp4',hd:1,dim:30},{id:'v52304',name:'Eldhav',m:-1,vid:'https://assets.mixkit.co/videos/52304/52304-1080.mp4',hd:1,dim:40},{id:'v52308',name:'Eldsida',m:-1,vid:'https://assets.mixkit.co/videos/52308/52308-1080.mp4',hd:1,dim:10},{id:'v2709',name:'Vedbrasa',m:-1,vid:'https://assets.mixkit.co/videos/2709/2709-1080.mp4',hd:1,dim:35},{id:'v4426',name:'Gnistor',m:-1,vid:'https://assets.mixkit.co/videos/4426/4426-1080.mp4',hd:1,dim:0},{id:'eldvideo',name:'Eldvideo',m:-1,vid:'/videos/eld-video.mp4'},{id:'video',name:'Egen video',m:-1},{id:'ingen',name:'Ingen',m:-1}];
 const SCREEN_DEF={bg:'eld',power:60,outline:4,dim:0,video:'',dsize:110,theme:'klassisk',split:3};
@@ -767,12 +767,32 @@ function applyScreen(b){
     v.hidden=false; const pr=v.play(); if(pr&&pr.catch)pr.catch(()=>{});
   }else if(!v.hidden||v.getAttribute('src')){v.pause();v.removeAttribute('src');try{v.load();}catch(e){}v.hidden=true;}
 }
+/* Bar screen: the sections are shared out over the columns by their real height (measured once at full size),
+   keeping their order, so adding drinks in the admin never leaves one column crowded and another empty */
+function autoCols(b,scr){
+  const n=scr.auto,ids=scr.order.filter(sid=>state.sections[sid]&&state.sections[sid].items.some(i=>i.state!=='hidden'));
+  if(ids.length<=n) return ids.map(sid=>[[sid]]);
+  b.content.innerHTML=`<div class="col" style="grid-column:1;--k:1">${ids.map(sid=>secHTML(state.sections[sid],undefined,false,0,sid)).join('')}</div>`;
+  const col=b.content.firstElementChild,gap=parseFloat(getComputedStyle(col).rowGap)||0;
+  const h=ids.map(sid=>{const el=col.querySelector('.sec-'+sid);return el?el.offsetHeight:0;});
+  // Try every way to cut the list into n columns; keep the one whose tallest column is lowest
+  let best=null,bestMax=Infinity;
+  const tall=(a,z)=>{let t=0;for(let i=a;i<z;i++)t+=h[i];return t+gap*(z-a-1);};
+  const walk=(start,left,cuts,mx)=>{
+    if(mx>=bestMax) return;
+    if(left===1){const m=Math.max(mx,tall(start,ids.length));if(m<bestMax){bestMax=m;best=[...cuts,ids.length];}return;}
+    for(let e=start+1;e<=ids.length-(left-1);e++) walk(e,left-1,[...cuts,e],Math.max(mx,tall(start,e)));
+  };
+  walk(0,n,[],0);
+  const out=[];let a=0;for(const z of best){out.push(ids.slice(a,z).map(sid=>[sid]));a=z;}
+  return out;
+}
 function renderBoard(b){
   applyScreen(b);
   if(SCREENS[b.key].promo){renderTips(b);return;}
   const scr=SCREENS[b.key], cfg=state.screens[b.key]||{};
   const three=scr.cols3&&(+cfg.split||3)===3;
-  const cols=three?scr.cols3:scr.cols;
+  const cols=three?scr.cols3:(scr.auto?autoCols(b,scr):scr.cols);
   pizzaFlow=three?scr.flow:null;
   b.content.style.gridTemplateColumns=three?scr.tpl3:'';
   b.content.style.columnGap=three?'26px':'';
