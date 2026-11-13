@@ -56,7 +56,11 @@ button,input,select{font:inherit;color:inherit}
 .content{position:absolute;inset:0;padding:54px 64px 46px;display:grid;grid-template-rows:100%;column-gap:56px}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
 .board-mat .content{grid-template-columns:1.05fr 1fr 1.2fr .85fr;column-gap:40px}
-.board-bar .content{grid-template-columns:1fr 1fr 1fr;column-gap:64px}
+.board-bar .content{grid-template-columns:1fr 1.1fr 1fr 1fr;column-gap:48px}
+.board-bar .nm{font-size:calc(var(--k)*38px)}
+.board-bar .pr{font-size:calc(var(--k)*40px)}
+.board-bar .col{gap:calc(var(--k)*12px)}
+.pr .pu{font-size:.62em;margin-left:.06em}
 /* Tips screen (Veckans tips / Afterwork): two offer cards side by side, photo on top */
 .board-promo .content{grid-template-columns:1fr 1fr;column-gap:72px;padding:44px 72px 50px}
 /* One offer alone: big photo on the left, text on the right */
@@ -125,7 +129,8 @@ button,input,select{font:inherit;color:inherit}
 .board-pizza .item>.no{grid-row:1;align-self:start;line-height:calc(var(--k)*33.5px)}
 .board-pizza .item,.board-pizza .klass,.board-mat .item,.board-bar .item{margin-bottom:var(--fill,0px)}
 /* Food screen: slightly smaller section signs leave more room for the dishes */
-.board-mat .content .plank,.board-bar .content .plank{zoom:.88}
+.board-mat .content .plank{zoom:.88}
+.board-bar .content .plank{zoom:.85}
 /* Kycklingburgare heading sits to the left, away from the price labels */
 .board-mat .sec-kyckling>.plank{align-self:flex-start;margin-left:calc(var(--k)*20px)}
 .phead{display:flex;flex-direction:column;align-items:center;gap:calc(var(--k)*5px);margin-top:calc(var(--k)*10px)}
@@ -622,7 +627,7 @@ const SCREENS={
   veckanstips:{name:'Veckans tips',order:[],promo:true,only:'tips'},
   afterwork:{name:'Afterwork',order:[],promo:true,only:'aw'},
   bar:{name:'Barskärm',order:['ol','sprit','whisky','vin','bubbel','cider','drinkar','shots'],
-    cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider'],['drinkar'],['shots']]]}
+    cols:[[['ol']],[['sprit'],['whisky']],[['vin'],['bubbel'],['cider']],[['drinkar'],['shots']]]}
 };
 const BGS=[{id:'eld',name:'Eld',m:0},{id:'glod',name:'Glöd',m:1},{id:'rok',name:'Rök',m:2},{id:'vedugn',name:'Vedugn',m:3},{id:'neon',name:'Neon',m:4},{id:'lava',name:'Lava',m:5},{id:'norrsken',name:'Norrsken',m:6},{id:'stjarnor',name:'Stjärnor',m:7},{id:'solnedgang',name:'Solnedgång',m:8},{id:'eldbild',name:'Eldbild',m:1,img:'/backgrounds/eld1.jpg'},{id:'v52314',name:'Flammor',m:-1,vid:'https://assets.mixkit.co/videos/52314/52314-1080.mp4',hd:1,dim:15},{id:'v52312',name:'Lågor',m:-1,vid:'https://assets.mixkit.co/videos/52312/52312-1080.mp4',hd:1,dim:30},{id:'v52304',name:'Eldhav',m:-1,vid:'https://assets.mixkit.co/videos/52304/52304-1080.mp4',hd:1,dim:40},{id:'v52308',name:'Eldsida',m:-1,vid:'https://assets.mixkit.co/videos/52308/52308-1080.mp4',hd:1,dim:10},{id:'v2709',name:'Vedbrasa',m:-1,vid:'https://assets.mixkit.co/videos/2709/2709-1080.mp4',hd:1,dim:35},{id:'v4426',name:'Gnistor',m:-1,vid:'https://assets.mixkit.co/videos/4426/4426-1080.mp4',hd:1,dim:0},{id:'eldvideo',name:'Eldvideo',m:-1,vid:'/videos/eld-video.mp4'},{id:'video',name:'Egen video',m:-1},{id:'ingen',name:'Ingen',m:-1}];
 const SCREEN_DEF={bg:'eld',power:60,outline:4,dim:0,video:'',dsize:110,theme:'klassisk',split:3};
@@ -658,7 +663,7 @@ state=normalize(readCache());
 
 /* ---------- board render ---------- */
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtP=p=>{p=String(p??'').trim(); if(!p) return ''; return esc(p).replace(/(\d+)(?!\d*:-)/g,'$1:-');};
+const fmtP=p=>{p=String(p??'').trim(); if(!p) return ''; return esc(p).replace(/(\d+)(?!\d*:-)/g,'$1:-').replace(/(\/\s*[a-zåäö]+\.?)$/i,'<small class="pu">$1</small>');};
 const fmtName=n=>esc(n).replace(/\s(\d+\s?(?:st|g))$/i,' <small>$1</small>');
 function headHTML(sec){
   let head='';
