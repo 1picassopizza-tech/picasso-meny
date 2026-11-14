@@ -113,6 +113,9 @@ button,input,select{font:inherit;color:inherit}
 .labels,.item{display:grid;grid-template-columns:calc(var(--k)*46px) minmax(0,1fr) auto;column-gap:calc(var(--k)*12px);align-items:baseline}
 .two .labels,.two .item{grid-template-columns:calc(var(--k)*30px) minmax(0,1fr) calc(var(--k)*82px) calc(var(--k)*92px)}
 /* Bar screen: wine and drinks rows start at the same place as the rows below them */
+/* Section price under the heading; rows without their own price get no dotted line */
+p.pr.secprice{display:block;text-align:center;margin:calc(var(--k)*2px) 0 calc(var(--k)*6px);font-size:calc(var(--k)*38px)!important;line-height:1.1}
+.item.nop .nm::after{display:none}
 .board-bar .two .labels,.board-bar .two .item{grid-template-columns:calc(var(--k)*46px) minmax(0,1fr) calc(var(--k)*70px) calc(var(--k)*80px)}
 .labels span{font-family:var(--f-desc);font-size:calc(var(--k)*23px);font-weight:600;line-height:1.05;text-align:center;color:var(--board-desc);white-space:pre-line}
 .no{font-family:var(--f-desc);font-weight:500;font-size:calc(var(--k)*24px);color:var(--board-num);text-align:end;text-shadow:0 2px 6px var(--shadow)}
@@ -669,6 +672,8 @@ function headHTML(sec){
   let head='';
   if(sec.title) head+=`<div class="plank"><span>${esc(sec.title)}</span></div>`;
   if(sec.note) head+=`<p class="note">${esc(sec.note).replace(/\n/g,'<br>')}</p>`;
+  // One price for the whole section (e.g. all whiskies 25:-/cl), shown under the heading
+  if(sec.price) head+=`<p class="pr secprice">${fmtP(sec.price)}</p>`;
   return head;
 }
 /* Split a list over n columns so each column gets about the same HEIGHT
@@ -747,7 +752,8 @@ function secHTML(sec,part,noHead,n,sid){
     const slut=it.state==='slut';
     const no=sec.numbered?(it.no!==''?esc(it.no)+'.':''):'–';
     const prices=slut?`<span class="slut">SLUT</span>`:`<span class="pr">${fmtP(it.price)}</span>${two?`<span class="pr">${fmtP(it.price2)}</span>`:''}`;
-    return `<div class="item${slut?' is-slut':''}"${ix}><span class="no">${no}</span><div><div class="nm">${fmtName(it.name)}</div>${it.desc?`<div class="ds">${esc(it.desc)}</div>`:''}</div>${prices}</div>`;
+    const nop=!slut&&!it.price&&!(two&&it.price2);
+    return `<div class="item${slut?' is-slut':''}${nop?' nop':''}"${ix}><span class="no">${no}</span><div><div class="nm">${fmtName(it.name)}</div>${it.desc?`<div class="ds">${esc(it.desc)}</div>`:''}</div>${prices}</div>`;
   }).join('');
   const foot=(part!==0&&sec.footer)?`<div class="footer">${esc(sec.footer)}</div>`:'';
   return `<div class="sec${two?' two':''}${sid?' sec-'+sid:''}">${head}${rows}${foot}</div>`;
@@ -1231,6 +1237,7 @@ function cardHTML(sid){
     <div class="card-body">
       <div class="sec-fields">
         <label class="fld"><span>Sektionsrubrik</span><input class="inp" id="${sid}-title" data-sf="title" value="${esc(sec.title)}"></label>
+        <label class="fld"><span>Samma pris för alla (visas under rubriken)</span><input class="inp" id="${sid}-sprice" data-sf="price" value="${esc(sec.price||'')}" placeholder="t.ex. 25/cl"></label>
         <label class="fld"><span>Text under rubriken (/ = ny rad)</span><input class="inp" id="${sid}-note" data-sf="note" value="${esc(sec.note.replace(/\n/g,' / '))}"></label>
         ${two?`<label class="fld"><span>Priskolumn 1</span><input class="inp" id="${sid}-l0" data-sf="l0" value="${esc(sec.labels[0].replace(/\n/g,' / '))}"></label>
         <label class="fld"><span>Priskolumn 2</span><input class="inp" id="${sid}-l1" data-sf="l1" value="${esc(sec.labels[1].replace(/\n/g,' / '))}"></label>`:''}
@@ -1300,6 +1307,7 @@ function onEdit(e){
     const multi=t.value.replace(/\s*\/\s*/g,'\n');
     if(f==='title'){sec.title=t.value;card.querySelector('.ttl').textContent=t.value||'(utan rubrik)';}
     else if(f==='l0'||f==='l1'){sec.labels[f==='l0'?0:1]=multi;}
+    else if(f==='price'){sec.price=t.value.trim();}
     else sec[f]=multi;
     queueSave();rerender();return;
   }
