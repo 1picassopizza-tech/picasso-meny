@@ -61,7 +61,8 @@ video::-webkit-media-controls-overlay-play-button{display:none!important;-webkit
 .content{position:absolute;inset:0;padding:54px 64px 46px;display:grid;grid-template-rows:100%;column-gap:56px}
 .board-pizza .content{grid-template-columns:1fr 1fr 1.08fr}
 .board-mat .content{grid-template-columns:1.05fr 1fr 1.2fr .85fr;column-gap:40px}
-.board-bar .content{grid-template-columns:1fr 1.1fr 1fr 1fr;column-gap:48px}
+.board-bar .content{grid-template-columns:1fr 1.1fr 1fr 1fr;column-gap:30px;padding-left:36px;padding-right:36px}
+.content.measuring .nm{white-space:nowrap}
 .board-bar .nm{font-size:calc(var(--k)*38px)}
 .board-bar .pr{font-size:calc(var(--k)*34px)}
 .board-bar .col{gap:calc(var(--k)*12px)}
@@ -839,6 +840,14 @@ function renderBoard(b){
   };
   pizzaBounds=null;
   build();
+  if(scr.auto){
+    // Give each column the width its longest line needs (name on one line + price), shared out over the screen width
+    const colEls=[...b.content.querySelectorAll('.col')];
+    b.content.style.gridTemplateColumns='';b.content.classList.add('measuring');colEls.forEach(c=>c.style.setProperty('--k','1'));
+    const need=colEls.map(c=>{let w=0;c.querySelectorAll('.item').forEach(it=>{const nm=it.querySelector('.nm');if(!nm)return;w=Math.max(w,it.clientWidth-nm.clientWidth+nm.scrollWidth);});return Math.max(w,200);});
+    b.content.classList.remove('measuring');
+    b.content.style.gridTemplateColumns=need.map(w=>`minmax(0,${w}fr)`).join(' ');
+  }
   if(pizzaFlow&&b.key==='pizza'){
     // Measure every row once at full size, then choose the column breaks that let the text be largest
     const colEls=[...b.content.querySelectorAll('.col')];
