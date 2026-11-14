@@ -43,6 +43,11 @@ button,input,select{font:inherit;color:inherit}
 .fire.nogl{background:radial-gradient(70% 55% at 50% 100%,rgba(240,110,20,.6),rgba(150,30,8,.3) 55%,transparent 80%)}
 .fire.off{visibility:hidden}
 .bgvid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;background:#000}
+/* No player buttons (fullscreen, cast, play) on top of background videos – nobody can press them on a TV */
+video::-webkit-media-controls,video::-webkit-media-controls-enclosure,video::-webkit-media-controls-panel,
+video::-webkit-media-controls-overlay-enclosure,video::-webkit-media-controls-overlay-cast-button,
+video::-webkit-media-controls-fullscreen-button,video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-overlay-play-button{display:none!important;-webkit-appearance:none;opacity:0!important}
 .bgimg{position:absolute;inset:-4%;background:#000 center/cover no-repeat;pointer-events:none;transform-origin:50% 100%;animation:imgDrift 9s ease-in-out infinite alternate,imgFlick 3.3s steps(1,end) infinite}
 @keyframes imgDrift{from{transform:scale(1) translateX(0)}to{transform:scale(1.06) translateX(-1.2%)}}
 @keyframes imgFlick{0%{filter:brightness(1)}17%{filter:brightness(1.1)}29%{filter:brightness(.95)}46%{filter:brightness(1.14)}58%{filter:brightness(1.02)}71%{filter:brightness(.93)}86%{filter:brightness(1.08)}}
@@ -777,6 +782,8 @@ function applyScreen(b){
   if(want){
     if(v.getAttribute('src')!==want){vidFail[b.key]=false;v.setAttribute('src',want);try{v.load();}catch(e){}}
     v.hidden=false; const pr=v.play(); if(pr&&pr.catch)pr.catch(()=>{});
+    // The stick has one video decoder to share: the tiny keep-awake video must not fight the background video
+    if(awakeVid&&!$('#screen').hidden){awakeVid.pause();}
   }else if(!v.hidden||v.getAttribute('src')){v.pause();v.removeAttribute('src');try{v.load();}catch(e){}v.hidden=true;}
 }
 /* Bar screen: the sections are shared out over the columns by their real height (measured once at full size),
@@ -1082,13 +1089,17 @@ function renderTips(b){
     const solo=b.content.classList.contains('solo'),tooBig=()=>el.scrollWidth>el.clientWidth+1||(solo&&el.offsetHeight>fs*2.2);
     while(tooBig()&&fs>40){fs-=4;el.style.fontSize=fs+'px';}});
 }
+/* Tell the browser this is a silent background video: no controls, no fullscreen, no casting, no picture-in-picture */
+function quietVideo(v){v.controls=false;v.disablePictureInPicture=true;v.disableRemotePlayback=true;
+  v.setAttribute('disablepictureinpicture','');v.setAttribute('disableremoteplayback','');v.setAttribute('x-webkit-airplay','deny');
+  v.setAttribute('controlslist','nofullscreen nodownload noremoteplayback noplaybackrate');v.tabIndex=-1;}
 function mount(host,key,fill){
   host.innerHTML='';
   const stage=document.createElement('div');stage.className='stage';
   const board=document.createElement('div');board.className='board board-'+key+(SCREENS[key].promo?' board-promo':'');
   const cv=document.createElement('canvas');cv.className='fire';cv.setAttribute('aria-hidden','true');
   const content=document.createElement('div');content.className='content';
-  const vid=document.createElement('video');vid.className='bgvid';vid.muted=true;vid.loop=true;vid.playsInline=true;vid.autoplay=true;vid.setAttribute('muted','');vid.setAttribute('playsinline','');vid.hidden=true;vid.setAttribute('aria-hidden','true');
+  const vid=document.createElement('video');vid.className='bgvid';vid.muted=true;vid.loop=true;vid.playsInline=true;vid.autoplay=true;vid.setAttribute('muted','');vid.setAttribute('playsinline','');vid.hidden=true;vid.setAttribute('aria-hidden','true');quietVideo(vid);
   vid.addEventListener('error',()=>{if(!vid.getAttribute('src'))return;vidFail[key]=true;vid.hidden=true;if(!$('#admin').hidden)toast('Videon kunde inte spelas – visar animerad eld istället.');});
   vid.addEventListener('playing',()=>{vidFail[key]=false;});
   const dim=document.createElement('div');dim.className='dim';
@@ -1408,12 +1419,14 @@ function onAuth(u){
 let idleT,wakeLock=null;
 /* Keep the TV stick awake: a tiny always-playing muted video counts as media playback,
    so the stick does not go to sleep and close the browser. */
-let awakeVid=null;
+var awakeVid=null;
 function keepAwake(){
+  // A background video already keeps the stick awake (and the TV app keeps it awake by itself)
+  if(boards.some(b=>b.stage.isConnected&&!b.vid.hidden&&b.vid.getAttribute('src')&&!$('#screen').hidden)){if(awakeVid)awakeVid.pause();return;}
   if(!awakeVid){
     awakeVid=document.createElement('video');
     awakeVid.muted=true;awakeVid.loop=true;awakeVid.playsInline=true;awakeVid.setAttribute('muted','');awakeVid.setAttribute('playsinline','');
-    awakeVid.setAttribute('aria-hidden','true');
+    awakeVid.setAttribute('aria-hidden','true');quietVideo(awakeVid);
     awakeVid.style.cssText='position:fixed;right:0;bottom:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:1';
     awakeVid.src='/videos/eld-video.mp4';
     document.body.appendChild(awakeVid);
