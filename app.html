@@ -244,6 +244,8 @@ h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute
 .row{padding:3px 0}
 .row.is-slut .f-name{text-decoration:line-through;text-decoration-color:var(--danger)}
 .row.is-hidden{opacity:.5}
+.row.is-rubrik .f-name{font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.row.is-rubrik .f-desc,.row.is-rubrik .f-price,.row.is-rubrik .f-price2{opacity:.35}
 .f-price,.f-price2,.f-no{text-align:center;font-variant-numeric:tabular-nums}
 .acts{display:flex;gap:2px;justify-content:flex-end}
 .ib{border:1px solid transparent;background:none;border-radius:6px;cursor:pointer;color:var(--muted);font-size:15px;line-height:1;width:2em;height:2em}
@@ -735,7 +737,8 @@ function secHTML(sec,part,noHead,n,sid){
   if(!sec) return '';
   // A food section with nothing to show is left out completely (no empty heading)
   if(part==null&&sid!=='pizza'&&!sec.items.some(i=>i.state!=='hidden')) return '';
-  let items=sec.items.filter(i=>i.state!=='hidden');
+  // A row with status "Underrubrik" is shown as a small heading inside the section (e.g. Vitt vin / Rött vin)
+  let items=sec.items.filter(i=>i.state!=='hidden').map(i=>i.state==='rubrik'?{klass:i.name}:i);
   if(sec===state.sections.pizza){
     // Pizzas in number order (no price classes); Special and Inbakad follow in the same list
     items=[...items].sort((a,b)=>(parseInt(a.no)||999)-(parseInt(b.no)||999));
@@ -1208,7 +1211,7 @@ async function shrinkImg(file){
 }
 
 /* ---------- admin: screens ---------- */
-const STATES=[['on','Synlig'],['slut','Slut idag'],['hidden','Dold']];
+const STATES=[['on','Synlig'],['slut','Slut idag'],['hidden','Dold'],['rubrik','Underrubrik']];
 function buildScreenControls(){
   document.querySelectorAll('.scard').forEach(card=>{
     const key=card.dataset.screen;
@@ -1242,13 +1245,13 @@ const openSet=new Set(['pizza','starters']);
 function rowHTML(sid,sec,it,i){
   const two=!!sec.labels, n=sec.items.length;
   const l0=two?esc(sec.labels[0].replace(/\n/g,' ')):'Pris', l1=two?esc(sec.labels[1].replace(/\n/g,' ')):'';
-  return `<div class="row${two?' two-row':''}${it.state==='slut'?' is-slut':''}${it.state==='hidden'?' is-hidden':''}" data-sid="${sid}" data-id="${it.id}">
+  return `<div class="row${two?' two-row':''}${it.state==='slut'?' is-slut':''}${it.state==='hidden'?' is-hidden':''}${it.state==='rubrik'?' is-rubrik':''}" data-sid="${sid}" data-id="${it.id}">
     <input class="inp f-no" id="${it.id}-no" data-f="no" value="${esc(it.no)}" aria-label="Nummer" ${sec.numbered?'':'disabled placeholder="–"'}>
     <input class="inp f-name" id="${it.id}-name" data-f="name" value="${esc(it.name)}" aria-label="Namn">
     <input class="inp f-desc" id="${it.id}-desc" data-f="desc" value="${esc(it.desc)}" aria-label="Ingredienser" placeholder="Ingredienser (valfritt)">
     <input class="inp f-price" id="${it.id}-price" data-f="price" value="${esc(it.price)}" aria-label="${l0}" inputmode="numeric">
     ${two?`<input class="inp f-price2" id="${it.id}-price2" data-f="price2" value="${esc(it.price2)}" aria-label="${l1}" inputmode="numeric">`:''}
-    <select class="inp f-state" id="${it.id}-state" data-f="state" aria-label="Status">${STATES.map(([v,l])=>`<option value="${v}"${it.state===v?' selected':''}>${l}</option>`).join('')}</select>
+    <select class="inp f-state" id="${it.id}-state" data-f="state" aria-label="Status">${STATES.filter(([v])=>v!=='rubrik'||!sec.numbered).map(([v,l])=>`<option value="${v}"${it.state===v?' selected':''}>${l}</option>`).join('')}</select>
     <div class="acts">
       <button class="ib" type="button" data-act="up" aria-label="Flytta upp" ${i===0?'disabled':''}>↑</button>
       <button class="ib" type="button" data-act="down" aria-label="Flytta ner" ${i===n-1?'disabled':''}>↓</button>
@@ -1340,7 +1343,7 @@ function onEdit(e){
   const row=t.closest('.row'); if(!row||!t.dataset.f) return;
   const sec=state.sections[row.dataset.sid]; const it=sec.items.find(x=>x.id===row.dataset.id); if(!it) return;
   it[t.dataset.f]=t.value;
-  if(t.dataset.f==='state'){row.classList.toggle('is-slut',t.value==='slut');row.classList.toggle('is-hidden',t.value==='hidden');}
+  if(t.dataset.f==='state'){row.classList.toggle('is-slut',t.value==='slut');row.classList.toggle('is-hidden',t.value==='hidden');row.classList.toggle('is-rubrik',t.value==='rubrik');}
   queueSave();rerender();
 }
 let undo=null,toastT;
