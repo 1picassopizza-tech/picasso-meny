@@ -659,6 +659,11 @@ function normalize(s){
   if(!s.screens.tips) s.screens.tips={...s.screens.mat,bg:(s.screens.mat&&s.screens.mat.bg)||'rok'};
   for(const k of ['veckanstips','afterwork']) if(!s.screens[k]) s.screens[k]={...s.screens.tips};
   for(const k of SCREEN_KEYS) s.screens[k]=Object.assign({},SCREEN_DEF,s.screens[k]||{});
+  // One-time change (Nov 2026): Whisky goes back to a price on every row instead of one price under the heading
+  if(!s.flags) s.flags={};
+  if(!s.flags.whiskyRowPrices){const w=s.sections.whisky;
+    if(w&&w.price){w.items.forEach(i=>{if(!i.price&&i.state!=='rubrik') i.price=w.price;}); w.price='';}
+    s.flags.whiskyRowPrices=true;}
   // Tips screen offers (added later)
   if(!s.promos){s.promos=promoDefaults();}
   for(const k of PROMO_KEYS) if(!s.promos[k]) s.promos[k]=promoDefaults()[k];
